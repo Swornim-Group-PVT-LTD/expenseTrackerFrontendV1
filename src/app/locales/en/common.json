@@ -1,0 +1,17 @@
+{
+  "dashboard": "Dashboard",
+  "balance": "Balance",
+  "income": "Income",
+  "expenses": "Expenses",
+  "savings": "Savings",
+  "investment": "Investments",
+  "add": "Add",
+  "monthly": "Monthly",
+  "yearly": "Yearly",
+  "total": "Total",
+  "welcome": "Welcome",
+    "settings": "Settings",
+  "language": "Language",
+  "catalogue": "Catalogue",
+  "statement": "Statement"
+}
