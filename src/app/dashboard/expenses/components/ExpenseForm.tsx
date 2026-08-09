@@ -30,10 +30,10 @@ const ExpenseForm = ({ onSuccess }: ExpenseFormProps) => {
   // ============================================================
   const loadCurrencySymbol = async () => {
     try {
-      const balances: BalanceResponse[] = await getBalancesService();
+      const balance: BalanceResponse = await getBalancesService();
 
-      if (balances.length > 0) {
-        setCurrency(balances[0].currency.symbol); // correct symbol path
+      if (balance?.currency?.symbol) {
+        setCurrency(balance.currency.symbol); // correct symbol path
       }
     } catch (error) {
       console.error("Failed to load currency symbol:", error);
@@ -87,7 +87,7 @@ const ExpenseForm = ({ onSuccess }: ExpenseFormProps) => {
   const handleAddExpense = async () => {
     // Validate category
     const categoryExists = categories.some(
-      (cat) => cat.expense_category.toLowerCase() === remarks.toLowerCase()
+      (cat) => cat.expense_category.toLowerCase() === remarks.toLowerCase(),
     );
 
     if (!categoryExists) {
@@ -120,18 +120,19 @@ const ExpenseForm = ({ onSuccess }: ExpenseFormProps) => {
   return (
     <div className="col-span-full lg:col-span-3 h-fit">
       <div className="bg-white rounded-md p-4 w-full h-full flex flex-col gap-4">
-
         {/* ⭐ Total Expense Display */}
         <div className="mb-4 p-3 rounded-lg bg-[#ff4d4d] border border-[#E53E3E]/30 flex items-center justify-between">
-          <span className="text-md font-semibold text-white">Total Expense</span>
+          <span className="text-md font-semibold text-white">
+            Total Expense
+          </span>
           <span className="text-xl font-bold text-white">
-            {currency}{totalExpense?.toLocaleString()}
+            {currency}
+            {totalExpense?.toLocaleString()}
           </span>
         </div>
 
         {/* ⭐ Input Section */}
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-6 items-stretch sm:items-center">
-
           {/* AUTO SYMBOL (from Balance API) */}
           <div className="relative w-full sm:w-24">
             <input
@@ -162,7 +163,10 @@ const ExpenseForm = ({ onSuccess }: ExpenseFormProps) => {
 
           {/* Remarks dropdown */}
           <SearchInput
-            options={categories.map(cat => ({ id: cat.id, value: cat.expense_category }))}
+            options={categories.map((cat) => ({
+              id: cat.id,
+              value: cat.expense_category,
+            }))}
             value={remarks}
             onChange={setRemarks}
             placeholder="Type expense category..."
@@ -175,13 +179,13 @@ const ExpenseForm = ({ onSuccess }: ExpenseFormProps) => {
             disabled={loading}
             className={`bg-[#FFAA00] hover:bg-[#FFAA00]/90 text-white font-bold 
                     text-md px-8 h-12 min-h-[48px] rounded transition-colors 
-                    w-full sm:w-auto cursor-pointer ${loading ? "opacity-50 cursor-not-allowed" : ""
-              }`}
+                    w-full sm:w-auto cursor-pointer ${
+                      loading ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
           >
             {loading ? "Saving..." : "Add"}
           </button>
         </div>
-
       </div>
     </div>
   );

@@ -25,7 +25,9 @@ const InvestmentForm = ({ onSuccess }: InvestmentFormProps) => {
   const [currency, setCurrency] = useState("");
   const [category, setCategory] = useState<string>("");
   const [loading, setLoading] = useState(false);
-  const [categories, setCategories] = useState<InvestmentCategoryResponse[]>([]);
+  const [categories, setCategories] = useState<InvestmentCategoryResponse[]>(
+    [],
+  );
   const [totalInvestment, setTotalInvestment] = useState<number>(0);
 
   // ============================================================
@@ -33,10 +35,10 @@ const InvestmentForm = ({ onSuccess }: InvestmentFormProps) => {
   // ============================================================
   const loadCurrencySymbol = async () => {
     try {
-      const balances: BalanceResponse[] = await getBalancesService();
+      const balance: BalanceResponse = await getBalancesService();
 
-      if (balances.length > 0) {
-        setCurrency(balances[0].currency.symbol);
+      if (balance?.currency?.symbol) {
+        setCurrency(balance.currency.symbol);
       }
     } catch (error) {
       console.error("Failed to load currency symbol:", error);
@@ -95,7 +97,7 @@ const InvestmentForm = ({ onSuccess }: InvestmentFormProps) => {
 
     // Validate category
     const categoryExists = categories.some(
-      (cat) => cat.investment_category.toLowerCase() === category.toLowerCase()
+      (cat) => cat.investment_category.toLowerCase() === category.toLowerCase(),
     );
 
     if (!categoryExists) {
@@ -128,18 +130,19 @@ const InvestmentForm = ({ onSuccess }: InvestmentFormProps) => {
   return (
     <div className="col-span-full lg:col-span-3 h-fit">
       <div className="bg-white rounded-md p-4 w-full h-full flex flex-col gap-4">
-
         {/* ⭐ Total Investment Display */}
         <div className="mb-4 p-3 rounded-lg bg-[#ffa726] border border-[#3182CE]/30 flex items-center justify-between">
-          <span className="text-md font-semibold text-white">Total Investment</span>
+          <span className="text-md font-semibold text-white">
+            Total Investment
+          </span>
           <span className="text-xl font-bold text-white">
-            {currency}{totalInvestment?.toLocaleString()}
+            {currency}
+            {totalInvestment?.toLocaleString()}
           </span>
         </div>
 
         {/*  Input Section */}
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-6 items-stretch sm:items-center">
-
           {/* AUTO SYMBOL (from Balance API) */}
           <div className="relative w-full sm:w-24">
             <input
@@ -169,7 +172,10 @@ const InvestmentForm = ({ onSuccess }: InvestmentFormProps) => {
 
           {/* Category dropdown */}
           <SearchInput
-            options={categories.map(cat => ({ id: cat.id, value: cat.investment_category }))}
+            options={categories.map((cat) => ({
+              id: cat.id,
+              value: cat.investment_category,
+            }))}
             value={category}
             onChange={setCategory}
             placeholder="Type investment category..."
@@ -181,13 +187,13 @@ const InvestmentForm = ({ onSuccess }: InvestmentFormProps) => {
             onClick={handleAddInvestment}
             disabled={loading}
             className={`bg-[#FFAA00] hover:bg-[#FFAA00]/90 text-white font-bold text-md px-8 h-12 rounded transition-colors disabled:opacity-50
-            w-full sm:w-auto cursor-pointer ${loading ? "opacity-50 cursor-not-allowed" : ""
-              }`}
+            w-full sm:w-auto cursor-pointer ${
+              loading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           >
             {loading ? "Saving..." : "Add"}
           </button>
         </div>
-
       </div>
     </div>
   );

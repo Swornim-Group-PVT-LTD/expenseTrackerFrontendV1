@@ -30,11 +30,11 @@ const IncomeForm = ({ onSuccess }: IncomeFormProps) => {
   // ============================================================
   const loadCurrencySymbol = async () => {
     try {
-      const balances: BalanceResponse[] = await getBalancesService();
+      const balance: BalanceResponse = await getBalancesService();
 
-      if (balances.length > 0) {
-        // IMPORTANT — Correct symbol path
-        setCurrency(balances[0].currency.symbol);
+      // IMPORTANT — Correct symbol path
+      if (balance?.currency?.symbol) {
+        setCurrency(balance.currency.symbol);
       }
     } catch (error) {
       console.error("Failed to load currency symbol:", error);
@@ -87,7 +87,7 @@ const IncomeForm = ({ onSuccess }: IncomeFormProps) => {
   const handleAddIncome = async () => {
     // Validate category
     const categoryExists = categories.some(
-      (cat) => cat.income_category.toLowerCase() === remarks.toLowerCase()
+      (cat) => cat.income_category.toLowerCase() === remarks.toLowerCase(),
     );
 
     if (!categoryExists) {
@@ -162,7 +162,10 @@ const IncomeForm = ({ onSuccess }: IncomeFormProps) => {
 
           {/* Remarks Selector */}
           <SearchInput
-            options={categories.map(cat => ({ id: cat.id, value: cat.income_category }))}
+            options={categories.map((cat) => ({
+              id: cat.id,
+              value: cat.income_category,
+            }))}
             value={remarks}
             onChange={setRemarks}
             placeholder="Type income category..."
@@ -173,8 +176,9 @@ const IncomeForm = ({ onSuccess }: IncomeFormProps) => {
           <button
             onClick={handleAddIncome}
             disabled={loading}
-            className={`bg-[#FFAA00] hover:bg-[#FFAA00]/90 text-white font-bold text-md px-8 h-12 rounded transition-colors disabled:opacity-50 w-full sm:w-auto cursor-pointer ${loading ? "opacity-50 cursor-not-allowed" : ""
-              }`}
+            className={`bg-[#FFAA00] hover:bg-[#FFAA00]/90 text-white font-bold text-md px-8 h-12 rounded transition-colors disabled:opacity-50 w-full sm:w-auto cursor-pointer ${
+              loading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           >
             {loading ? "Saving..." : "Add"}
           </button>
