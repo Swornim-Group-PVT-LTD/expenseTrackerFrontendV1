@@ -25,21 +25,22 @@ export const CurrencyProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const loadCurrency = async () => {
-      try {
-        const balances: BalanceResponse[] = await getBalancesService();
-        if (balances.length > 0 && balances[0].currency?.symbol) {
-          setCurrency(balances[0].currency.symbol);
-        }
-      } catch (error) {
-        console.error("Failed to load currency symbol:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const loadCurrency = async () => {
+    try {
+      const balance: BalanceResponse = await getBalancesService();
 
-    loadCurrency();
-  }, []);
+      if (balance?.currency?.symbol) {
+        setCurrency(balance.currency.symbol);
+      }
+    } catch (error) {
+      console.error("Failed to load currency symbol:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  loadCurrency();
+}, []);
 
   return (
     <CurrencyContext.Provider value={{ currency, loading }}>
