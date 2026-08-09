@@ -50,7 +50,7 @@ export default function CatalogueUI() {
     <div>
       {/* Breadcrumb & Title */}
       <div className="mb-4">
-        <div className="flex items-center gap-1 text-md mb-1 md:mb-4">
+        <div className="flex items-center gap-1 text-md mb-1 md:mb-4 mt-4">
           <Home className="w-4 h-4" />
           <span>/Catalogue</span>
         </div>

@@ -82,7 +82,7 @@ function Income() {
 
   return (
     <div className="">
-      <div className="flex items-center gap-1 text-md mb-1 md:mb-4">
+      <div className="flex items-center gap-1 text-md mb-1 md:mb-4 mt-4">
         <Home className="w-4 h-4" />
         <span>/Add Income</span>
       </div>

@@ -19,7 +19,7 @@ export default function IncomeCatalogueUI() {
     <div className="p-4">
       {/* Breadcrumb & Title */}
       <div className="mb-4">
-        <div className="flex items-center gap-1 text-md mb-2">
+        <div className="flex items-center gap-1 text-md mb-2 mt-4">
           <Home className="w-4 h-4" />
           <span>/ Add Income Catalogue</span>
         </div>

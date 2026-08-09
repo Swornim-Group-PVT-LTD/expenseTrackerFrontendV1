@@ -16,7 +16,7 @@ export default function InvestmentCatalogueUI() {
   return (
     <div className="p-4">
       <div className="mb-4">
-        <div className="flex items-center gap-1 text-md mb-2">
+        <div className="flex items-center gap-1 text-md mb-2 mt-4">
           <Home className="w-4 h-4" />
           <span>/ Add Investment Catalogue</span>
         </div>
