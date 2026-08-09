@@ -24,9 +24,10 @@ export default function ExpensesLineChart() {
   const [currency, setCurrency] = useState("Rs");
   const loadCurrencySymbol = async () => {
     try {
-      const balances: BalanceResponse[] = await getBalancesService();
-      if (balances.length > 0) {
-        setCurrency(balances[0].currency.symbol);
+      const balance: BalanceResponse = await getBalancesService();
+
+      if (balance?.currency?.symbol) {
+        setCurrency(balance.currency.symbol);
       }
     } catch (error) {
       console.error("Failed to load currency symbol:", error);
