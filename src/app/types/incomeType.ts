@@ -18,8 +18,11 @@ export interface IncomeResponse {
 
 export interface TotalIncomeResponse {
   message: string;
+  filter_type: string;
   total_income: number;
-  currency: string;
-  symbol: string;
+  currency: {
+    country: string;
+    currency: string;
+    symbol: string;
+  };
 }
-

@@ -23,7 +23,8 @@ const page = () => {
       <h1 className="text-2xl font-bold mb-4">Add Balance</h1>
 
       <BalanceForm onSuccess={handleRefresh} />
-      <RemainingBalanceChart refreshTrigger={refreshTrigger} />
+      <div className="mt-4"> <RemainingBalanceChart refreshTrigger={refreshTrigger} /></div>
+   
       <DateFilter />
       <BalanceTable refreshTrigger={refreshTrigger} />
     </div>

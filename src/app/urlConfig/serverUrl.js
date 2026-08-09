@@ -1,2 +1,2 @@
-const SERVER_URL = "https://expensetrackerapi.swornimgroup.com.np";
+const SERVER_URL = "https://expensetrackerV1.swornimgroup.com.np";
 export default SERVER_URL;

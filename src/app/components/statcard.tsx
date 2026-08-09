@@ -63,7 +63,7 @@ export default function StatCard({
       const total = res[`total_${label.toLowerCase()}`] ?? 0;
       setValue(Number(total));
       
-      setCurrency(res.symbol || "Rs");
+      setCurrency(res.currency.symbol || "Rs");
     }
     catch(error){
       console.error(`Failed to fetch ${label} data:`, error);

@@ -3,22 +3,29 @@ export interface AddBalancePayload {
   currency_id: number;
 }
 
+export interface Currency {
+  country: string;
+  currency: string;
+  symbol: string;
+}
+
 export interface BalanceResponse {
   id: number;
   sn: string;
   customerid: string;
-  add_opening_balance: number;
-  closing_balance: number;
-  total_balance: number;
-  created_date: string;
-  updated_date: string;
-  currency: {
-    country: string;
-    currency: string;
-    symbol: string;
-  }
-}
 
+  // New API fields
+  master_opening_balance: string;
+  opening_balance: string;
+  closing_balance: string;
+  date: string;
+
+  // Optional API fields
+  total_credit?: string;
+  total_debit?: string;
+
+  currency: Currency;
+}
 
 export interface MonthlyRemainingBalanceResponse {
   message: string;

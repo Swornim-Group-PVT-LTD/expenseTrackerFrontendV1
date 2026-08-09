@@ -61,7 +61,7 @@ export const getIncomeService = async (): Promise<IncomeResponse[]> => {
         ? response.data
         : [];
 
-    const currencySymbol = response.data?.symbol || "NPR";
+    const currencySymbol = response.data?.currency.symbol || "NPR";
 
     // Attach currency symbol to each income
     const incomesWithCurrency = incomes.map(income => ({
@@ -138,7 +138,7 @@ export const getIncomeByDateRangeService = async (from?: string, to?: string, ca
     
     // Safely extract array from response
     const incomes: IncomeResponse[] = response.data?.data || [];
-    const currencySymbol = response.data?.symbol || "NPR";
+    const currencySymbol = response.data?.currency.symbol || "NPR";
 
     // Attach currency symbol to each income
     const incomesWithCurrency = incomes.map(income => ({

@@ -22,23 +22,21 @@ const BalanceCard = ({ refreshTrigger }: BalanceCardProps) => {
     router.push("/dashboard/balance");
   };
 
-
   useEffect(() => {
     const fetchBalance = async () => {
       try {
         setLoading(true);
-        const balances: BalanceResponse[] = await getBalancesService();
 
-        if (balances.length > 0) {
-          const latestBalance = Number(
-            balances[balances.length - 1].total_balance || 0
-          );
-          setCurrency(balances[balances.length - 1].currency?.symbol || "NPR");
-          setBalance(latestBalance);
-        }
+        const balance: BalanceResponse = await getBalancesService();
+
+        const latestBalance = Number(balance.closing_balance || 0);
+
+        setCurrency(balance.currency?.symbol || "NPR");
+        setBalance(latestBalance);
       } catch (error) {
         console.error("Error fetching balance:", error);
         setBalance(0);
+        setCurrency("NPR");
       } finally {
         setLoading(false);
       }
@@ -62,15 +60,16 @@ const BalanceCard = ({ refreshTrigger }: BalanceCardProps) => {
           <div className="text-xl font-bold mb-1" style={{ color: "#000000" }}>
             Balance
           </div>
-          <div className="text-2xl font-bold text-[#07371B] mb-1">{loading ? (
-            <ClipLoader size={22} color="#000000" />
-          ) : (
-            `${currency} ${balance?.toLocaleString() ?? 0}`
-          )}</div>
+          <div className="text-2xl font-bold text-[#07371B] mb-1">
+            {loading ? (
+              <ClipLoader size={22} color="#000000" />
+            ) : (
+              `${currency} ${balance?.toLocaleString() ?? 0}`
+            )}
+          </div>
         </div>
       </div>
       <div className="text-xl text-right">
-
         <span className="text-black/70 font-bold">Your Balance</span>
       </div>
     </div>
@@ -78,6 +77,3 @@ const BalanceCard = ({ refreshTrigger }: BalanceCardProps) => {
 };
 
 export default BalanceCard;
-
-
-

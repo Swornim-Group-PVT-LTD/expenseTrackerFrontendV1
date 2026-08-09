@@ -29,18 +29,19 @@ export default function Dashboard() {
   const [currency, setCurrency] = useState<string>("");
 
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
 
       try {
         const [
-          balances,
+          balanceResponse,
           totalExpenses,
           totalSaving,
           totalIncome,
           totalInvestment,
-        ]: [BalanceResponse[], number, number, number, number] =
+        ]: [BalanceResponse, number, number, number, number] =
           await Promise.all([
             getBalancesService(),
             getTotalExpenseService(),
@@ -50,22 +51,21 @@ export default function Dashboard() {
           ]);
 
         // Balance
-        const bal = balances?.[0]?.total_balance ?? 0;
+        const bal = balanceResponse?.closing_balance ?? 0;
         setBalance(Number(bal));
 
-        // Only set currency if defined
-        const detectedCurrency = balances?.[0]?.currency?.symbol;
+        // Currency
+        const detectedCurrency = balanceResponse?.currency?.symbol;
         setCurrency(detectedCurrency || "");
 
         // Totals
-        setTotalExpenses(totalExpenses);
-        setTotalSaving(totalSaving);
-        setTotalIncome(totalIncome);
-        setTotalInvestment(totalInvestment);
+        setTotalExpenses(Number(totalExpenses) || 0);
+        setTotalSaving(Number(totalSaving) || 0);
+        setTotalIncome(Number(totalIncome) || 0);
+        setTotalInvestment(Number(totalInvestment) || 0);
       } catch (error) {
         console.error("Dashboard loading error:", error);
 
-        // Reset values if error
         setBalance(0);
         setTotalExpenses(0);
         setTotalSaving(0);
@@ -79,7 +79,6 @@ export default function Dashboard() {
 
     fetchData();
   }, []);
-
   const dashboardData = [
     {
       title: "Income",

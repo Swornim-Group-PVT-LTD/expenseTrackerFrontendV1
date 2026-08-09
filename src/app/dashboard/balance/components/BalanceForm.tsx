@@ -18,7 +18,7 @@ import { CurrencyResponse } from "@/app/types/currencyType";
 export default function BalanceForm({ onSuccess }: { onSuccess?: () => void }) {
   const [amount, setAmount] = useState<number | "">(40000);
   const [currencyList, setCurrencyList] = useState<CurrencyResponse[]>([]);
-  const [currencySymbol, setCurrencySymbol] = useState<string>("$");
+  const [currencySymbol, setCurrencySymbol] = useState("$");
   const [currencyId, setCurrencyId] = useState<number | null>(null);
 
   const [loading, setLoading] = useState(false);
@@ -29,8 +29,13 @@ export default function BalanceForm({ onSuccess }: { onSuccess?: () => void }) {
     const init = async () => {
       try {
         // Check existing balance
-        const balances: BalanceResponse[] = await getBalancesService();
-        if (balances.length > 0) setBalanceExists(true);
+        const balance: BalanceResponse = await getBalancesService();
+
+        if (balance) {
+          setBalanceExists(true);
+        } else {
+          setBalanceExists(false);
+        }
 
         // Fetch currency list
         const currencies = await getCurrencyService();
@@ -43,12 +48,12 @@ export default function BalanceForm({ onSuccess }: { onSuccess?: () => void }) {
         }
       } catch (error) {
         console.error("Error loading initial data:", error);
+        setBalanceExists(false);
       }
     };
 
     init();
   }, []);
-
   const handleAddBalance = async () => {
     if (balanceExists) {
       Swal.fire({
@@ -79,7 +84,8 @@ export default function BalanceForm({ onSuccess }: { onSuccess?: () => void }) {
 
       setAmount(0);
       setBalanceExists(true);
-      onSuccess && onSuccess();
+
+      if (onSuccess) onSuccess();
     } catch (error: any) {
       Swal.fire({
         icon: "error",
@@ -92,13 +98,12 @@ export default function BalanceForm({ onSuccess }: { onSuccess?: () => void }) {
   };
 
   return (
-    <div className="bg-white rounded-md p-4 mb-4 w-full max-w-lg">
-      <div className="flex gap-2 items-center">
+    <div className="w-full max-w-2xl">
+      <div className="flex items-center gap-2">
         {/* Currency Dropdown */}
         <div className="relative">
           <select
-            className="appearance-none w-24 h-12 px-2 text-md font-bold text-[#716A6A] 
-               border border-[#574A4A]/50 rounded cursor-pointer bg-white"
+            className="appearance-none w-24 h-12 px-2 text-md font-bold text-[#716A6A] border border-[#574A4A]/50 rounded cursor-pointer bg-white"
             value={currencyId ?? ""}
             onChange={(e) => {
               const selected = currencyList.find(
@@ -113,7 +118,7 @@ export default function BalanceForm({ onSuccess }: { onSuccess?: () => void }) {
           >
             {currencyList.map((item) => (
               <option key={item.id} value={item.id}>
-                {item.symbol} {/* ✅ SHOW ONLY SYMBOL */}
+                {item.symbol}
               </option>
             ))}
           </select>
@@ -135,9 +140,8 @@ export default function BalanceForm({ onSuccess }: { onSuccess?: () => void }) {
         {/* Submit Button */}
         <button
           onClick={handleAddBalance}
-          disabled={loading || balanceExists}
-          className="bg-[#FFAA00] hover:bg-[#FFAA00]/90 text-white font-bold text-md px-6 h-12 rounded 
-                     transition-colors disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
+          disabled={loading}
+          className="bg-[#FFAA00] hover:bg-[#FFAA00]/90 text-white font-bold text-md px-6 h-12 rounded transition-colors disabled:opacity-50 cursor-pointer"
         >
           {loading ? "Saving..." : "Add"}
         </button>
