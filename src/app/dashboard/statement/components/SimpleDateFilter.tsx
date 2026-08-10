@@ -18,7 +18,7 @@ export default function SimpleDateFilter({
   onDownloadExcel,
 }: SimpleDateFilterProps) {
 
-  // Format date as YYYY-MM-DD for input type="date"
+  // Format date for input type="date"
   const formatDateForInput = (date: Date): string => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -30,13 +30,13 @@ export default function SimpleDateFilter({
   const today = new Date();
   const todayString = formatDateForInput(today);
 
-  // Always set both fields to today's date
+  // Both dates default to today
   const [fromDate, setFromDate] = useState<string>(todayString);
   const [toDate, setToDate] = useState<string>(todayString);
 
   const [isLoading, setIsLoading] = useState(false);
 
-  // Load today's statement automatically
+  // Load today's statement automatically on mount
   useEffect(() => {
     handleSearch(todayString, todayString);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -70,7 +70,7 @@ export default function SimpleDateFilter({
     }
   };
 
-  // Reset to today's date and reload today's statement
+  // Reset to today and reload today's statement
   const handleToday = () => {
     setFromDate(todayString);
     setToDate(todayString);
@@ -134,6 +134,7 @@ export default function SimpleDateFilter({
         {/* Buttons */}
         <div className="flex flex-col sm:flex-row lg:flex-col gap-2 lg:w-48">
 
+          {/* Search */}
           <button
             onClick={() => handleSearch()}
             disabled={isLoading}
@@ -152,6 +153,7 @@ export default function SimpleDateFilter({
             )}
           </button>
 
+          {/* Today */}
           <button
             onClick={handleToday}
             className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg transition-colors"
