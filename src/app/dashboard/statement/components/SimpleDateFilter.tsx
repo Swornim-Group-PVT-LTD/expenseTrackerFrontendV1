@@ -17,7 +17,7 @@ export default function SimpleDateFilter({
   onDownloadPDF,
   onDownloadExcel,
 }: SimpleDateFilterProps) {
-  // Format date for input type="date"
+
   const formatDateForInput = (date: Date): string => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -35,7 +35,7 @@ export default function SimpleDateFilter({
 
   const [isLoading, setIsLoading] = useState(false);
 
-  // Auto load today's statement
+  // Auto-load today's statement
   useEffect(() => {
     handleSearch(todayString, todayString);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -45,6 +45,7 @@ export default function SimpleDateFilter({
     startDate: string = fromDate,
     endDate: string = toDate
   ) => {
+
     if (!startDate || !endDate) {
       toast.warning("Please select both dates");
       return;
@@ -78,8 +79,10 @@ export default function SimpleDateFilter({
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
       <div className="flex flex-col lg:flex-row gap-4">
+
         {/* Date Inputs */}
         <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4">
+
           {/* From Date */}
           <div className="flex flex-col">
             <label
@@ -127,6 +130,7 @@ export default function SimpleDateFilter({
 
         {/* Buttons */}
         <div className="flex flex-col sm:flex-row lg:flex-col gap-2 lg:w-48">
+
           <button
             onClick={() => handleSearch()}
             disabled={isLoading}
@@ -158,6 +162,7 @@ export default function SimpleDateFilter({
       {(onDownloadPDF || onDownloadExcel) && (
         <div className="mt-4 pt-4 border-t border-gray-200">
           <div className="flex flex-wrap gap-2">
+
             {onDownloadPDF && (
               <button
                 onClick={onDownloadPDF}
@@ -177,6 +182,7 @@ export default function SimpleDateFilter({
                 Download Excel
               </button>
             )}
+
           </div>
         </div>
       )}
