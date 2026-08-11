@@ -25,7 +25,7 @@ const page = () => {
       <BalanceForm onSuccess={handleRefresh} />
       <div className="mt-4"> <RemainingBalanceChart refreshTrigger={refreshTrigger} /></div>
    
-      <DateFilter />
+      <div className="mt-4"><DateFilter /></div>
       <BalanceTable refreshTrigger={refreshTrigger} />
     </div>
   );

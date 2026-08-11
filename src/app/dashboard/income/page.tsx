@@ -86,11 +86,14 @@ function Income() {
         <Home className="w-4 h-4" />
         <span>/Add Income</span>
       </div>
+
       <h1 className="text-2xl font-bold mb-4">Add Income</h1>
+
       <div className="grid grid-cols-1 items-center lg:grid-cols-4 gap-4">
         <BalanceCard refreshTrigger={refreshTrigger} />
         <IncomeForm onSuccess={handleRefresh} />
       </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 my-4">
         <div className="h-80">
           <IncomeLineChart refreshTrigger={refreshTrigger} />
@@ -99,58 +102,62 @@ function Income() {
           <IncomeBarChart refreshTrigger={refreshTrigger} />
         </div>
       </div>
-      <DateFilter
-        initialFrom={
-          new Date(new Date().getFullYear(), new Date().getMonth(), 1)
-        }
-        initialTo={
-          new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)
-        }
-        fetchService={getIncomeByDateRangeService}
-        onFilter={handleFilter}
-        categories={categories}
-        categoryKey="income_category"
-        onDownloadPDF={() => {
-          const data = isFilterActive ? filteredData : allData;
-          if (data.length === 0) {
-            toast.warning(
-              "No data to download. Please apply filters or wait for data to load.",
-            );
-            return;
+
+      {/* Added top margin here */}
+      <div className="mt-10">
+        <DateFilter
+          initialFrom={
+            new Date(new Date().getFullYear(), new Date().getMonth(), 1)
           }
-          downloadService.downloadPDF(
-            data,
-            [
-              { header: "ID", field: "id" },
-              { header: "Income", field: "add_income" },
-              { header: "Category", field: "income_category" },
-              { header: "Total Income", field: "total_income" },
-              { header: "Date", field: "created_date" },
-            ],
-            "Income_Report",
-          );
-        }}
-        onDownloadExcel={() => {
-          const data = isFilterActive ? filteredData : allData;
-          if (data.length === 0) {
-            toast.warning(
-              "No data to download. Please apply filters or wait for data to load.",
-            );
-            return;
+          initialTo={
+            new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)
           }
-          downloadService.downloadExcel(
-            data,
-            [
-              { header: "ID", field: "id" },
-              { header: "Income", field: "add_income" },
-              { header: "Category", field: "income_category" },
-              { header: "Total Income", field: "total_income" },
-              { header: "Date", field: "created_date" },
-            ],
-            "Income_Report",
-          );
-        }}
-      />
+          fetchService={getIncomeByDateRangeService}
+          onFilter={handleFilter}
+          categories={categories}
+          categoryKey="income_category"
+          onDownloadPDF={() => {
+            const data = isFilterActive ? filteredData : allData;
+            if (data.length === 0) {
+              toast.warning(
+                "No data to download. Please apply filters or wait for data to load.",
+              );
+              return;
+            }
+            downloadService.downloadPDF(
+              data,
+              [
+                { header: "ID", field: "id" },
+                { header: "Income", field: "add_income" },
+                { header: "Category", field: "income_category" },
+                { header: "Total Income", field: "total_income" },
+                { header: "Date", field: "created_date" },
+              ],
+              "Income_Report",
+            );
+          }}
+          onDownloadExcel={() => {
+            const data = isFilterActive ? filteredData : allData;
+            if (data.length === 0) {
+              toast.warning(
+                "No data to download. Please apply filters or wait for data to load.",
+              );
+              return;
+            }
+            downloadService.downloadExcel(
+              data,
+              [
+                { header: "ID", field: "id" },
+                { header: "Income", field: "add_income" },
+                { header: "Category", field: "income_category" },
+                { header: "Total Income", field: "total_income" },
+                { header: "Date", field: "created_date" },
+              ],
+              "Income_Report",
+            );
+          }}
+        />
+      </div>
 
       {isFilterActive && (
         <div className="mb-4 flex items-center gap-2">
@@ -165,6 +172,7 @@ function Income() {
           </button>
         </div>
       )}
+
       <IncomeTable
         refreshTrigger={refreshTrigger}
         filteredData={isFilterActive ? filteredData : null}

@@ -86,71 +86,84 @@ function Investment() {
         <Home className="w-4 h-4" />
         <span>/Add Investment</span>
       </div>
+
       <h1 className="text-2xl font-bold mb-4">Add Investment</h1>
+
       <div className="grid grid-cols-1 items-center lg:grid-cols-4 gap-4">
         <BalanceCard refreshTrigger={refreshTrigger} />
         <InvestmentForm onSuccess={handleRefresh} />
       </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 my-4">
         <div className="h-80">
           <InvestmentLineChart refreshTrigger={refreshTrigger} />
         </div>
+
         <div className="h-80">
           <InvestmentBarChart refreshTrigger={refreshTrigger} />
         </div>
       </div>
-      <DateFilter
-        fetchService={getInvestmentByDateRangeService}
-        onFilter={handleFilter}
-        categories={categories}
-        categoryKey="investment_category"
-        onDownloadPDF={() => {
-          const data = isFilterActive ? filteredData : allData;
-          if (data.length === 0) {
-            toast.warning(
-              "No data to download. Please apply filters or wait for data to load.",
+
+      {/* Added mt-10 here */}
+      <div className="mt-10">
+        <DateFilter
+          fetchService={getInvestmentByDateRangeService}
+          onFilter={handleFilter}
+          categories={categories}
+          categoryKey="investment_category"
+          onDownloadPDF={() => {
+            const data = isFilterActive ? filteredData : allData;
+
+            if (data.length === 0) {
+              toast.warning(
+                "No data to download. Please apply filters or wait for data to load.",
+              );
+              return;
+            }
+
+            downloadService.downloadPDF(
+              data,
+              [
+                { header: "ID", field: "id" },
+                { header: "Investment", field: "add_investment" },
+                { header: "Category", field: "investment_category" },
+                { header: "Total Investment", field: "total_investment" },
+                { header: "Date", field: "created_date" },
+              ],
+              "Investment_Report",
             );
-            return;
-          }
-          downloadService.downloadPDF(
-            data,
-            [
-              { header: "ID", field: "id" },
-              { header: "Investment", field: "add_investment" },
-              { header: "Category", field: "investment_category" },
-              { header: "Total Investment", field: "total_investment" },
-              { header: "Date", field: "created_date" },
-            ],
-            "Investment_Report",
-          );
-        }}
-        onDownloadExcel={() => {
-          const data = isFilterActive ? filteredData : allData;
-          if (data.length === 0) {
-            toast.warning(
-              "No data to download. Please apply filters or wait for data to load.",
+          }}
+          onDownloadExcel={() => {
+            const data = isFilterActive ? filteredData : allData;
+
+            if (data.length === 0) {
+              toast.warning(
+                "No data to download. Please apply filters or wait for data to load.",
+              );
+              return;
+            }
+
+            downloadService.downloadExcel(
+              data,
+              [
+                { header: "ID", field: "id" },
+                { header: "Investment", field: "add_investment" },
+                { header: "Category", field: "investment_category" },
+                { header: "Total Investment", field: "total_investment" },
+                { header: "Date", field: "created_date" },
+              ],
+              "Investment_Report",
             );
-            return;
-          }
-          downloadService.downloadExcel(
-            data,
-            [
-              { header: "ID", field: "id" },
-              { header: "Investment", field: "add_investment" },
-              { header: "Category", field: "investment_category" },
-              { header: "Total Investment", field: "total_investment" },
-              { header: "Date", field: "created_date" },
-            ],
-            "Investment_Report",
-          );
-        }}
-      />
+          }}
+        />
+      </div>
 
       {isFilterActive && (
         <div className="mb-4 flex items-center gap-2">
           <span className="text-sm text-gray-600">
             Showing {filteredData.length} filtered results
           </span>
+
           <button
             onClick={clearFilter}
             className="text-sm bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded"
@@ -159,6 +172,7 @@ function Investment() {
           </button>
         </div>
       )}
+
       <InvestmentTable
         refreshTrigger={refreshTrigger}
         filteredData={isFilterActive ? filteredData : null}

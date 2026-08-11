@@ -107,6 +107,7 @@ function Expenses() {
           >
             Add Threshold
           </button>
+
           <button
             onClick={() => setIsViewThresholdOpen(true)}
             className="bg-[#133840] hover:bg-[#133840]/90 text-white font-semibold px-4 py-2 rounded transition-colors cursor-pointer"
@@ -122,6 +123,7 @@ function Expenses() {
         onClose={() => setIsAddThresholdOpen(false)}
         onSuccess={handleThresholdSuccess}
       />
+
       <ViewThresholdModal
         isOpen={isViewThresholdOpen}
         onClose={() => setIsViewThresholdOpen(false)}
@@ -145,66 +147,76 @@ function Expenses() {
         <div className="h-80">
           <ExpensesLineChart refreshTrigger={refreshTrigger} />
         </div>
+
         <div className="h-80">
           <ExpensesBarChart refreshTrigger={refreshTrigger} />
         </div>
       </div>
-      <DateFilter
-        initialFrom={
-          new Date(new Date().getFullYear(), new Date().getMonth(), 1)
-        }
-        initialTo={new Date()}
-        fetchService={getExpenseByDateRangeService}
-        onFilter={handleFilter}
-        categories={categories}
-        categoryKey="expense_category"
-        onDownloadPDF={() => {
-          const data = isFilterActive ? filteredData : allData;
-          if (data.length === 0) {
-            toast.warning(
-              "No data to download. Please apply filters or wait for data to load.",
-            );
-            return;
+
+      {/* Added mt-10 here */}
+      <div className="mt-10">
+        <DateFilter
+          initialFrom={
+            new Date(new Date().getFullYear(), new Date().getMonth(), 1)
           }
-          downloadService.downloadPDF(
-            data,
-            [
-              { header: "ID", field: "id" },
-              { header: "Expense", field: "add_expenses" },
-              { header: "Category", field: "expense_category" },
-              { header: "Total Expenses", field: "total_expenses" },
-              { header: "Date", field: "created_date" },
-            ],
-            "Expense_Report",
-          );
-        }}
-        onDownloadExcel={() => {
-          const data = isFilterActive ? filteredData : allData;
-          if (data.length === 0) {
-            toast.warning(
-              "No data to download. Please apply filters or wait for data to load.",
+          initialTo={new Date()}
+          fetchService={getExpenseByDateRangeService}
+          onFilter={handleFilter}
+          categories={categories}
+          categoryKey="expense_category"
+          onDownloadPDF={() => {
+            const data = isFilterActive ? filteredData : allData;
+
+            if (data.length === 0) {
+              toast.warning(
+                "No data to download. Please apply filters or wait for data to load.",
+              );
+              return;
+            }
+
+            downloadService.downloadPDF(
+              data,
+              [
+                { header: "ID", field: "id" },
+                { header: "Expense", field: "add_expenses" },
+                { header: "Category", field: "expense_category" },
+                { header: "Total Expenses", field: "total_expenses" },
+                { header: "Date", field: "created_date" },
+              ],
+              "Expense_Report",
             );
-            return;
-          }
-          downloadService.downloadExcel(
-            data,
-            [
-              { header: "ID", field: "id" },
-              { header: "Expense", field: "add_expenses" },
-              { header: "Category", field: "expense_category" },
-              { header: "Total Expenses", field: "total_expenses" },
-              { header: "Date", field: "created_date" },
-            ],
-            "Expense_Report",
-          );
-        }}
-      />
+          }}
+          onDownloadExcel={() => {
+            const data = isFilterActive ? filteredData : allData;
+
+            if (data.length === 0) {
+              toast.warning(
+                "No data to download. Please apply filters or wait for data to load.",
+              );
+              return;
+            }
+
+            downloadService.downloadExcel(
+              data,
+              [
+                { header: "ID", field: "id" },
+                { header: "Expense", field: "add_expenses" },
+                { header: "Category", field: "expense_category" },
+                { header: "Total Expenses", field: "total_expenses" },
+                { header: "Date", field: "created_date" },
+              ],
+              "Expense_Report",
+            );
+          }}
+        />
+      </div>
 
       {isFilterActive && (
         <div className="mb-4 flex items-center gap-2">
           <span className="text-sm text-gray-600">
             Showing {filteredData.length} filtered results
           </span>
+
           <button
             onClick={clearFilter}
             className="text-sm bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded"
@@ -213,6 +225,7 @@ function Expenses() {
           </button>
         </div>
       )}
+
       <ExpenseTable
         refreshTrigger={refreshTrigger}
         filteredData={isFilterActive ? filteredData : null}
