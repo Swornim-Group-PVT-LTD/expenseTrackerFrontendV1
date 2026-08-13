@@ -13,6 +13,10 @@ import {
 import { getBalancesService } from "../../../services/balanceService";
 import { BalanceResponse } from "../../../types/balanceType";
 
+import { useBalanceVisibility } from "@/app/context/BalanceHideShowContext";
+import { useCurrency } from "@/app/context/CurrencyContext";
+import { maskAmount } from "@/app/utils/maskAmount";
+
 export default function BalanceTable({
   refreshTrigger,
 }: {
@@ -20,6 +24,8 @@ export default function BalanceTable({
 }) {
   const [balances, setBalances] = useState<BalanceResponse[]>([]);
   const [loading, setLoading] = useState(true);
+  const { isVisible } = useBalanceVisibility();
+  const { currency } = useCurrency();
 
   useEffect(() => {
     const fetchBalances = async () => {
@@ -86,18 +92,27 @@ export default function BalanceTable({
                   </TableCell>
 
                   <TableCell>
-                    {row.currency?.symbol}{" "}
-                    {Number(row.master_opening_balance).toLocaleString()}
+                    {maskAmount(
+                      Number(row.master_opening_balance),
+                      isVisible,
+                      currency,
+                    )}
                   </TableCell>
 
                   <TableCell>
-                    {row.currency?.symbol}{" "}
-                    {Number(row.opening_balance).toLocaleString()}
+                    {maskAmount(
+                      Number(row.opening_balance),
+                      isVisible,
+                      currency,
+                    )}
                   </TableCell>
 
                   <TableCell>
-                    {row.currency?.symbol}{" "}
-                    {Number(row.closing_balance).toLocaleString()}
+                    {maskAmount(
+                      Number(row.closing_balance),
+                      isVisible,
+                      currency,
+                    )}
                   </TableCell>
 
                   <TableCell>{row.date}</TableCell>
@@ -145,8 +160,11 @@ export default function BalanceTable({
                   Master Opening
                 </span>
                 <span className="text-sm font-bold text-gray-700">
-                  {row.currency?.symbol}{" "}
-                  {Number(row.master_opening_balance).toLocaleString()}
+                  {maskAmount(
+                    Number(row.master_opening_balance),
+                    isVisible,
+                    currency,
+                  )}
                 </span>
               </div>
 
@@ -156,8 +174,7 @@ export default function BalanceTable({
                   Opening Balance
                 </span>
                 <span className="text-sm font-bold text-gray-800">
-                  {row.currency?.symbol}{" "}
-                  {Number(row.opening_balance).toLocaleString()}
+                  {maskAmount(Number(row.opening_balance), isVisible, currency)}
                 </span>
               </div>
 
@@ -167,8 +184,7 @@ export default function BalanceTable({
                   Closing Balance
                 </span>
                 <span className="text-sm font-bold text-[#FFAA00]">
-                  {row.currency?.symbol}{" "}
-                  {Number(row.closing_balance).toLocaleString()}
+                  {maskAmount(Number(row.closing_balance), isVisible, currency)}
                 </span>
               </div>
             </div>

@@ -21,7 +21,9 @@ import { SavingResponse } from "@/app/types/savingType";
 import { SavingCategoryResponse } from "@/app/types/catalolgueType/savingCatalogueType";
 import { getSavingCategoriesService } from "@/app/services/catalogueServices/savingCatalogueService";
 import SearchInput from "@/app/components/SearchInput";
-import { on } from "events";
+import { useBalanceVisibility } from "@/app/context/BalanceHideShowContext";
+import { maskAmount } from "@/app/utils/maskAmount";
+import { useCurrency } from "@/app/context/CurrencyContext";
 
 export default function SavingTable({
   refreshTrigger,
@@ -45,6 +47,9 @@ export default function SavingTable({
   });
 
   const [categories, setCategories] = useState<SavingCategoryResponse[]>([]);
+
+  const { currency } = useCurrency();
+  const { isVisible } = useBalanceVisibility();
 
   const fetchCategories = async () => {
     try {
@@ -104,7 +109,9 @@ export default function SavingTable({
   const saveEdit = async (sn: string) => {
     // Validate category
     const categoryExists = categories.some(
-      (cat) => cat.saving_category.toLowerCase() === editForm.saving_category.toLowerCase()
+      (cat) =>
+        cat.saving_category.toLowerCase() ===
+        editForm.saving_category.toLowerCase(),
     );
 
     if (!categoryExists) {
@@ -125,12 +132,12 @@ export default function SavingTable({
         prev.map((item) =>
           item.sn === sn
             ? {
-              ...item,
-              add_saving: editForm.add_saving,
-              saving_category: editForm.saving_category,
-            }
-            : item
-        )
+                ...item,
+                add_saving: editForm.add_saving,
+                saving_category: editForm.saving_category,
+              }
+            : item,
+        ),
       );
 
       cancelEdit();
@@ -202,20 +209,22 @@ export default function SavingTable({
                         {row.id}
                       </TableCell>
                       <TableCell>
-                        {row.symbol || "NPR"}{" "}
                         {editingSn === row.sn ? (
-                          <input
-                            className="p-2 border rounded-md border-gray-300"
-                            value={editForm.add_saving}
-                            onChange={(e) =>
-                              setEditForm((prev) => ({
-                                ...prev,
-                                add_saving: Number(e.target.value),
-                              }))
-                            }
-                          />
+                          <>
+                            {row.symbol || "NPR"}{" "}
+                            <input
+                              className="p-2 border rounded-md border-gray-300"
+                              value={editForm.add_saving}
+                              onChange={(e) =>
+                                setEditForm((prev) => ({
+                                  ...prev,
+                                  add_saving: Number(e.target.value),
+                                }))
+                              }
+                            />
+                          </>
                         ) : (
-                          Number(row.add_saving).toLocaleString()
+                          maskAmount(row.add_saving, isVisible, currency)
                         )}
                       </TableCell>
 
@@ -223,7 +232,9 @@ export default function SavingTable({
                         {editingSn === row.sn ? (
                           <input
                             type="checkbox"
-                            checked={editForm.want_to_deduct_from_balance || false}
+                            checked={
+                              editForm.want_to_deduct_from_balance || false
+                            }
                             onChange={(e) =>
                               setEditForm((prev) => ({
                                 ...prev,
@@ -241,9 +252,17 @@ export default function SavingTable({
                       <TableCell>
                         {editingSn === row.sn ? (
                           <SearchInput
-                            options={categories.map(cat => ({ id: cat.id, value: cat.saving_category }))}
+                            options={categories.map((cat) => ({
+                              id: cat.id,
+                              value: cat.saving_category,
+                            }))}
                             value={editForm.saving_category}
-                            onChange={(value) => setEditForm(prev => ({ ...prev, saving_category: value }))}
+                            onChange={(value) =>
+                              setEditForm((prev) => ({
+                                ...prev,
+                                saving_category: value,
+                              }))
+                            }
                             placeholder="Type saving category..."
                             className="w-full sm:w-80"
                           />
@@ -253,7 +272,7 @@ export default function SavingTable({
                       </TableCell>
 
                       <TableCell>
-                        {row.symbol || "NPR"} {row.total_saving.toLocaleString()}
+                        {maskAmount(row.total_saving, isVisible, currency)}
                       </TableCell>
                       <TableCell>{row.created_date}</TableCell>
                       <TableCell>
@@ -302,9 +321,11 @@ export default function SavingTable({
                       >
                         <span>Total Saving</span>
                         <span>
-                          {saving[saving.length - 1].symbol || "NPR"}{" "}
-                          {saving[saving.length - 1].total_saving?.toLocaleString() ||
-                            "0"}
+                          {maskAmount(
+                            saving[saving.length - 1].total_saving,
+                            isVisible,
+                            currency,
+                          )}
                         </span>
                       </div>
                     </TableCell>
@@ -406,7 +427,9 @@ export default function SavingTable({
                             }))
                           }
                         />
-                        <span className="text-[10px] text-gray-500 font-medium leading-none">Deduct from balance</span>
+                        <span className="text-[10px] text-gray-500 font-medium leading-none">
+                          Deduct from balance
+                        </span>
                       </label>
                     </>
                   ) : (
@@ -423,7 +446,9 @@ export default function SavingTable({
                 <div className="flex flex-col items-end">
                   {editingSn === row.sn ? (
                     <div className="flex items-center gap-1">
-                      <span className="text-xs text-gray-500">{row.symbol || "NPR"}</span>
+                      <span className="text-xs text-gray-500">
+                        {row.symbol || "NPR"}
+                      </span>
                       <input
                         type="number"
                         className="w-24 p-1 text-sm border rounded focus:ring-1 focus:ring-[#FFAA00]"
@@ -438,8 +463,7 @@ export default function SavingTable({
                     </div>
                   ) : (
                     <span className="text-sm font-bold text-gray-800">
-                      Saving {row.symbol || "NPR"}{" "}
-                      {Number(row.add_saving).toLocaleString()}
+                      Saving {maskAmount(row.add_saving, isVisible, currency)}
                     </span>
                   )}
                 </div>
@@ -447,10 +471,12 @@ export default function SavingTable({
 
               {/* Row 3: Date and Total */}
               <div className="flex justify-between items-center">
-                <span className="text-xs text-gray-500">{row.created_date}</span>
+                <span className="text-xs text-gray-500">
+                  {row.created_date}
+                </span>
                 <span className="text-xs font-bold text-gray-700">
-                  Total Saving {row.symbol || "NPR"}{" "}
-                  {row.total_saving?.toLocaleString() || "0"}
+                  Total Saving{" "}
+                  {maskAmount(row.total_saving, isVisible, currency)}
                 </span>
               </div>
             </div>
@@ -466,9 +492,11 @@ export default function SavingTable({
             <div className="flex justify-between items-center">
               <span>Total Saving</span>
               <span>
-                {saving[saving.length - 1].symbol || "NPR"}{" "}
-                {saving[saving.length - 1].total_saving?.toLocaleString() ||
-                  "0"}
+                {maskAmount(
+                  saving[saving.length - 1].total_saving,
+                  isVisible,
+                  currency,
+                )}
               </span>
             </div>
           </div>

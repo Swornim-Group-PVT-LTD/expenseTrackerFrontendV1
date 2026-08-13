@@ -21,6 +21,8 @@ import {
 import { IncomeResponse } from "@/app/types/incomeType";
 import { getIncomeCategoriesService } from "@/app/services/catalogueServices/incomeCatalogueService";
 import { IncomeCategoryResponse } from "@/app/types/catalolgueType/incomeCatalogueType";
+import { useBalanceVisibility } from "@/app/context/BalanceHideShowContext";
+import { maskAmount } from "@/app/utils/maskAmount";
 
 export default function IncomeTable({
   refreshTrigger,
@@ -46,6 +48,8 @@ export default function IncomeTable({
 
   const [categories, setCategories] = useState<IncomeCategoryResponse[]>([]);
 
+  const { isVisible } = useBalanceVisibility();
+
   const fetchIncome = async () => {
     setLoading(true);
     try {
@@ -70,7 +74,6 @@ export default function IncomeTable({
   };
 
   useEffect(() => {
-    // If filter is active, use filteredData (even if currently loading/empty, parent controls it)
     if (isFilterActive) {
       setIncome(filteredData || []);
       setLoading(false);
@@ -80,7 +83,6 @@ export default function IncomeTable({
     fetchCategories();
   }, [refreshTrigger, filteredData, isFilterActive]);
 
-  // Start editing a row
   const startEdit = (item: any) => {
     setEditingSn(item.sn);
     setEditForm({
@@ -89,17 +91,16 @@ export default function IncomeTable({
     });
   };
 
-  // Cancel editing
   const cancelEdit = () => {
     setEditingSn(null);
     setEditForm({ add_income: 0, income_category: "" });
   };
 
-  // Save update
   const saveEdit = async (sn: string) => {
-    // Validate category
     const categoryExists = categories.some(
-      (cat) => cat.income_category.toLowerCase() === editForm.income_category.toLowerCase()
+      (cat) =>
+        cat.income_category.toLowerCase() ===
+        editForm.income_category.toLowerCase(),
     );
 
     if (!categoryExists) {
@@ -118,12 +119,12 @@ export default function IncomeTable({
         prev.map((item) =>
           item.sn === sn
             ? {
-              ...item,
-              add_income: editForm.add_income,
-              income_category: editForm.income_category,
-            }
-            : item
-        )
+                ...item,
+                add_income: editForm.add_income,
+                income_category: editForm.income_category,
+              }
+            : item,
+        ),
       );
 
       cancelEdit();
@@ -192,20 +193,26 @@ export default function IncomeTable({
                         {row.id}
                       </TableCell>
                       <TableCell>
-                        {row.symbol || "NPR"}{" "}
                         {editingSn === row.sn ? (
-                          <input
-                            className="p-2 border rounded-md border-gray-300"
-                            value={editForm.add_income}
-                            onChange={(e) =>
-                              setEditForm((prev) => ({
-                                ...prev,
-                                add_income: Number(e.target.value),
-                              }))
-                            }
-                          />
+                          <>
+                            {row.symbol || "NPR"}{" "}
+                            <input
+                              className="p-2 border rounded-md border-gray-300"
+                              value={editForm.add_income}
+                              onChange={(e) =>
+                                setEditForm((prev) => ({
+                                  ...prev,
+                                  add_income: Number(e.target.value),
+                                }))
+                              }
+                            />
+                          </>
                         ) : (
-                          Number(row.add_income).toLocaleString()
+                          maskAmount(
+                            row.add_income,
+                            isVisible,
+                            row.symbol || "NPR",
+                          )
                         )}
                       </TableCell>
                       <TableCell>
@@ -230,8 +237,11 @@ export default function IncomeTable({
                         )}
                       </TableCell>
                       <TableCell>
-                        {row.symbol || "NPR"}{" "}
-                        {row.total_income.toLocaleString()}
+                        {maskAmount(
+                          row.total_income,
+                          isVisible,
+                          row.symbol || "NPR",
+                        )}
                       </TableCell>
                       <TableCell>{row.created_date}</TableCell>
                       <TableCell>
@@ -280,10 +290,11 @@ export default function IncomeTable({
                       >
                         <span>Total Income</span>
                         <span>
-                          {income[income.length - 1].symbol || "NPR"}{" "}
-                          {income[
-                            income.length - 1
-                          ].total_income?.toLocaleString() || "0"}
+                          {maskAmount(
+                            income[income.length - 1].total_income,
+                            isVisible,
+                            income[income.length - 1].symbol || "NPR",
+                          )}
                         </span>
                       </div>
                     </TableCell>
@@ -381,7 +392,9 @@ export default function IncomeTable({
                 <div className="flex flex-col items-end">
                   {editingSn === row.sn ? (
                     <div className="flex items-center gap-1">
-                      <span className="text-xs text-gray-500">{row.symbol || "NPR"}</span>
+                      <span className="text-xs text-gray-500">
+                        {row.symbol || "NPR"}
+                      </span>
                       <input
                         type="number"
                         className="w-24 p-1 text-sm border rounded focus:ring-1 focus:ring-[#FFAA00]"
@@ -396,8 +409,12 @@ export default function IncomeTable({
                     </div>
                   ) : (
                     <span className="text-sm font-bold text-gray-800">
-                      Income {row.symbol || "NPR"}{" "}
-                      {Number(row.add_income).toLocaleString()}
+                      Income{" "}
+                      {maskAmount(
+                        row.add_income,
+                        isVisible,
+                        row.symbol || "NPR",
+                      )}
                     </span>
                   )}
                 </div>
@@ -405,10 +422,12 @@ export default function IncomeTable({
 
               {/* Row 3: Date and Total */}
               <div className="flex justify-between items-center">
-                <span className="text-xs text-gray-500">{row.created_date}</span>
+                <span className="text-xs text-gray-500">
+                  {row.created_date}
+                </span>
                 <span className="text-xs font-bold text-gray-700">
-                  Total Income {row.symbol || "NPR"}{" "}
-                  {row.total_income?.toLocaleString() || "0"}
+                  Total Income{" "}
+                  {maskAmount(row.total_income, isVisible, row.symbol || "NPR")}
                 </span>
               </div>
             </div>
@@ -424,9 +443,11 @@ export default function IncomeTable({
             <div className="flex justify-between items-center">
               <span>Total Income</span>
               <span>
-                {income[income.length - 1].symbol || "NPR"}{" "}
-                {income[income.length - 1].total_income?.toLocaleString() ||
-                  "0"}
+                {maskAmount(
+                  income[income.length - 1].total_income,
+                  isVisible,
+                  income[income.length - 1].symbol || "NPR",
+                )}
               </span>
             </div>
           </div>

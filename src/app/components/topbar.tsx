@@ -9,10 +9,14 @@ import Link from "next/link";
 
 import { Settings, HelpCircle, LogOut } from "lucide-react";
 
+import { Eye, EyeOff } from "lucide-react";
+import { useBalanceVisibility } from "../context/BalanceHideShowContext";
+
 export default function TopNav() {
   const { collapsed } = useSidebar();
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const { isVisible, toggleVisibility } = useBalanceVisibility();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -29,33 +33,37 @@ export default function TopNav() {
 
   const [open, setOpen] = useState(false);
 
-
   const { user, logout } = useAuth();
 
   const handleLogout = () => {
     // Clear the access token cookie
-    document.cookie = "access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; Secure; SameSite=Strict";
+    document.cookie =
+      "access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; Secure; SameSite=Strict";
 
     //remove from localstorage and context
     logout();
 
     // Redirect to login page
     window.location.href = "/authentication/login";
-  }
+  };
 
   return (
-    <div className={`text-white h-16 bg-[#133840] shadow-lg z-40 flex items-center justify-between px-3 fixed top-0 right-0 left-0 transition-all duration-500 ${collapsed ? 'md:ml-20' : 'md:ml-64'
-      }`}>
+    <div
+      className={`text-white h-16 bg-[#133840] shadow-lg z-40 flex items-center justify-between px-3 fixed top-0 right-0 left-0 transition-all duration-500 ${
+        collapsed ? "md:ml-20" : "md:ml-64"
+      }`}
+    >
       {/* Logo - Hidden on mobile */}
-      <Link href="/dashboard" className="hidden md:flex items-center gap-2 hover:opacity-80 transition-opacity">
+      <Link
+        href="/dashboard"
+        className="hidden md:flex items-center gap-2 hover:opacity-80 transition-opacity"
+      >
         <img
           src="/app-logo.png"
           alt="Expense Tracker"
           className="h-10 object-contain"
         />
       </Link>
-
-
 
       {/* Welcome message - Show on mobile, positioned left */}
       <div className="md:hidden">
@@ -70,9 +78,13 @@ export default function TopNav() {
           Welcome, {user?.first_name}
         </span>
 
-        <div className="relative flex items-center gap-1 " onClick={() => setOpen(!open)} ref={dropdownRef}>
-          <div className="relative" >
-            <div className="w-10 h-10 rounded-full bg-[#EFF0F3] flex items-center justify-center" >
+        <div
+          className="relative flex items-center gap-1 "
+          onClick={() => setOpen(!open)}
+          ref={dropdownRef}
+        >
+          <div className="relative">
+            <div className="w-10 h-10 rounded-full bg-[#EFF0F3] flex items-center justify-center">
               <img
                 src="/user.svg"
                 alt="User"
@@ -86,7 +98,10 @@ export default function TopNav() {
           {/* Dropdown */}
           {open && (
             <div className="absolute right-0 top-full mt-2 w-48 bg-[var(--color1)] rounded-lg shadow-lg py-2 z-50">
-              <button className="flex items-center w-full px-4 py-2 text-sm text-white hover:bg-[var(--color2)]" onClick={() => router.push('/settings')}>
+              <button
+                className="flex items-center w-full px-4 py-2 text-sm text-white hover:bg-[var(--color2)]"
+                onClick={() => router.push("/settings")}
+              >
                 <Settings className="h-4 w-4 mr-2" />
                 Settings
               </button>
@@ -95,14 +110,30 @@ export default function TopNav() {
                 Help & Support
               </button>
 
-              <button onClick={handleLogout} className="flex items-center w-full px-4 py-2 text-sm text-white hover:bg-[var(--color2)]">
+              <button
+                onClick={handleLogout}
+                className="flex items-center w-full px-4 py-2 text-sm text-white hover:bg-[var(--color2)]"
+              >
                 <LogOut className="h-4 w-4 mr-2" />
                 Logout
               </button>
-
             </div>
           )}
         </div>
+
+        {/* Balance visibility toggle - grouped with the bell as the utility-icon cluster */}
+        <button
+          onClick={toggleVisibility}
+          aria-label={isVisible ? "Hide balances" : "Show balances"}
+          title={isVisible ? "Hide balances" : "Show balances"}
+          className="w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center text-[#004299] cursor-pointer  bg-[#FDC300] hover:bg-[#FDC300]/90 transition-colors "
+        >
+          {isVisible ? (
+            <Eye size={18} className="md:w-5 md:h-5" />
+          ) : (
+            <EyeOff size={18} className="md:w-5 md:h-5" />
+          )}
+        </button>
 
         <div className="relative">
           <div className="w-10 h-10 rounded-full bg-[#FDC300] flex items-center justify-center cursor-pointer hover:bg-[#FDC300]/90 transition-colors">

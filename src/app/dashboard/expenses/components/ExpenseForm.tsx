@@ -12,6 +12,8 @@ import { getBalancesService } from "@/app/services/balanceService";
 
 import { ExpenseCategoryResponse } from "@/app/types/catalolgueType/expenseCatalogueType";
 import { BalanceResponse } from "@/app/types/balanceType";
+import { useBalanceVisibility } from "@/app/context/BalanceHideShowContext";
+import { maskAmount } from "@/app/utils/maskAmount";
 
 interface ExpenseFormProps {
   onSuccess?: () => void;
@@ -24,6 +26,8 @@ const ExpenseForm = ({ onSuccess }: ExpenseFormProps) => {
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState<ExpenseCategoryResponse[]>([]);
   const [totalExpense, setTotalExpense] = useState<number>(0);
+
+  const { isVisible } = useBalanceVisibility();
 
   // ============================================================
   // 1️⃣ Fetch currency symbol from Balance API
@@ -126,8 +130,7 @@ const ExpenseForm = ({ onSuccess }: ExpenseFormProps) => {
             Total Expense
           </span>
           <span className="text-xl font-bold text-white">
-            {currency}
-            {totalExpense?.toLocaleString()}
+            {maskAmount(totalExpense, isVisible, currency)}
           </span>
         </div>
 
