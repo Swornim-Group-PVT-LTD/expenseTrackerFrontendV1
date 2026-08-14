@@ -12,6 +12,8 @@ import { getBalancesService } from "@/app/services/balanceService";
 
 import { IncomeCategoryResponse } from "@/app/types/catalolgueType/incomeCatalogueType";
 import { BalanceResponse } from "@/app/types/balanceType";
+import { useBalanceVisibility } from "@/app/context/BalanceHideShowContext";
+import { maskAmount } from "@/app/utils/maskAmount";
 
 interface IncomeFormProps {
   onSuccess?: () => void;
@@ -24,6 +26,7 @@ const IncomeForm = ({ onSuccess }: IncomeFormProps) => {
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState<IncomeCategoryResponse[]>([]);
   const [totalIncome, setTotalIncome] = useState<number>(0);
+  const { isVisible } = useBalanceVisibility();
 
   // ============================================================
   // 1️⃣ Fetch currency SYMBOL from BALANCE API
@@ -126,8 +129,7 @@ const IncomeForm = ({ onSuccess }: IncomeFormProps) => {
             Total Income
           </span>
           <span className="text-xl font-bold text-[#FFFFFF]">
-            {currency}
-            {totalIncome?.toLocaleString()}
+            {maskAmount(totalIncome, isVisible, currency)}
           </span>
         </div>
 

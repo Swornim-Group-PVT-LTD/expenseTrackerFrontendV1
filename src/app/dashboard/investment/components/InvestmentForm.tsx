@@ -15,6 +15,8 @@ import { BalanceResponse } from "@/app/types/balanceType";
 
 import { getInvestmentCategoriesService } from "@/app/services/catalogueServices/investmentCatalogueService";
 import { InvestmentCategoryResponse } from "@/app/types/catalolgueType/investmentCatalogueType";
+import { useBalanceVisibility } from "@/app/context/BalanceHideShowContext";
+import { maskAmount } from "@/app/utils/maskAmount";
 
 interface InvestmentFormProps {
   onSuccess?: () => void;
@@ -29,6 +31,8 @@ const InvestmentForm = ({ onSuccess }: InvestmentFormProps) => {
     [],
   );
   const [totalInvestment, setTotalInvestment] = useState<number>(0);
+
+  const { isVisible } = useBalanceVisibility();
 
   // ============================================================
   // 1️⃣ Fetch currency symbol from Balance API
@@ -136,8 +140,7 @@ const InvestmentForm = ({ onSuccess }: InvestmentFormProps) => {
             Total Investment
           </span>
           <span className="text-xl font-bold text-white">
-            {currency}
-            {totalInvestment?.toLocaleString()}
+            {maskAmount(totalInvestment, isVisible, currency)}
           </span>
         </div>
 

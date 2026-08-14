@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+// @ts-ignore
 import "./globals.css";
-
 import I18nProvider from "./i18n/I18nProvider";
 
 import { AuthProvider } from "@/context/AuthContext";
+import BalanceCard from "./components/BalanceCard";
+import { BalanceVisibilityProvider } from "./context/BalanceHideShowContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,11 +33,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AuthProvider>
-        <I18nProvider>
-          {children}
-        </I18nProvider>
-        </AuthProvider>
+        <BalanceVisibilityProvider>
+          <AuthProvider>
+            <I18nProvider>{children}</I18nProvider>
+          </AuthProvider>
+        </BalanceVisibilityProvider>
       </body>
     </html>
   );

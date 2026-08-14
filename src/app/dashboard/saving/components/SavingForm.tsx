@@ -12,6 +12,8 @@ import { SavingCategoryResponse } from "@/app/types/catalolgueType/savingCatalog
 
 import { getBalancesService } from "@/app/services/balanceService";
 import { BalanceResponse } from "@/app/types/balanceType";
+import { useBalanceVisibility } from "@/app/context/BalanceHideShowContext";
+import { maskAmount } from "@/app/utils/maskAmount";
 
 interface SavingFormProps {
   onSuccess?: () => void;
@@ -25,6 +27,8 @@ const SavingForm = ({ onSuccess }: SavingFormProps) => {
   const [deductBalance, setDeductBalance] = useState(false);
   const [categories, setCategories] = useState<SavingCategoryResponse[]>([]);
   const [totalSaving, setTotalSaving] = useState<number>(0);
+
+  const { isVisible } = useBalanceVisibility();
 
   // ============================================================
   // 1️⃣ Fetch currency symbol from Balance API
@@ -131,7 +135,7 @@ const SavingForm = ({ onSuccess }: SavingFormProps) => {
           <span className="text-md font-semibold text-white">Total Saving</span>
           <span className="text-xl font-bold text-white">
             {currency}
-            {totalSaving?.toLocaleString()}
+            {maskAmount(totalSaving, isVisible, currency)}
           </span>
         </div>
 

@@ -22,7 +22,9 @@ import {
 import { InvestmentResponse } from "@/app/types/investmentType";
 import { getInvestmentCategoriesService } from "@/app/services/catalogueServices/investmentCatalogueService";
 import { InvestmentCategoryResponse } from "@/app/types/catalolgueType/investmentCatalogueType";
-import { on } from "events";
+import { useBalanceVisibility } from "@/app/context/BalanceHideShowContext";
+import { maskAmount } from "@/app/utils/maskAmount";
+import { useCurrency } from "@/app/context/CurrencyContext";
 
 export default function InvestmentTable({
   refreshTrigger,
@@ -44,8 +46,10 @@ export default function InvestmentTable({
     investment_category: "",
   });
   const [categories, setCategories] = useState<InvestmentCategoryResponse[]>(
-    []
+    [],
   );
+  const { currency } = useCurrency();
+  const { isVisible } = useBalanceVisibility();
 
   const fetchCategories = async () => {
     try {
@@ -98,7 +102,9 @@ export default function InvestmentTable({
   const saveEdit = async (sn: string) => {
     // Validate category
     const categoryExists = categories.some(
-      (cat) => cat.investment_category.toLowerCase() === editForm.investment_category.toLowerCase()
+      (cat) =>
+        cat.investment_category.toLowerCase() ===
+        editForm.investment_category.toLowerCase(),
     );
 
     if (!categoryExists) {
@@ -119,12 +125,12 @@ export default function InvestmentTable({
         prev.map((item) =>
           item.sn === sn
             ? {
-              ...item,
-              add_investment: editForm.add_investment,
-              investment_category: editForm.investment_category,
-            }
-            : item
-        )
+                ...item,
+                add_investment: editForm.add_investment,
+                investment_category: editForm.investment_category,
+              }
+            : item,
+        ),
       );
 
       cancelEdit();
@@ -195,29 +201,38 @@ export default function InvestmentTable({
                         {row.id}
                       </TableCell>
                       <TableCell>
-                        {row.symbol || "NPR"}{" "}
                         {editingSn === row.sn ? (
-                          <input
-                            className="p-2 border rounded-md border-gray-300"
-                            value={editForm.add_investment}
-                            onChange={(e) =>
-                              setEditForm((prev) => ({
-                                ...prev,
-                                add_investment: Number(e.target.value),
-                              }))
-                            }
-                          />
+                          <>
+                            {row.symbol || "NPR"}{" "}
+                            <input
+                              className="p-2 border rounded-md border-gray-300"
+                              value={editForm.add_investment}
+                              onChange={(e) =>
+                                setEditForm((prev) => ({
+                                  ...prev,
+                                  add_investment: Number(e.target.value),
+                                }))
+                              }
+                            />
+                          </>
                         ) : (
-                          Number(row.add_investment).toLocaleString()
+                          maskAmount(row.add_investment, isVisible, currency)
                         )}
                       </TableCell>
                       <TableCell>
                         {editingSn === row.sn ? (
-
                           <SearchInput
-                            options={categories.map(cat => ({ id: cat.id, value: cat.investment_category }))}
+                            options={categories.map((cat) => ({
+                              id: cat.id,
+                              value: cat.investment_category,
+                            }))}
                             value={editForm.investment_category}
-                            onChange={(value) => setEditForm(prev => ({ ...prev, investment_category: value }))}
+                            onChange={(value) =>
+                              setEditForm((prev) => ({
+                                ...prev,
+                                investment_category: value,
+                              }))
+                            }
                             placeholder="Type investment category..."
                             className="w-full sm:w-80"
                           />
@@ -226,7 +241,7 @@ export default function InvestmentTable({
                         )}
                       </TableCell>
                       <TableCell>
-                        {row.symbol || "NPR"} {row.total_investment.toLocaleString()}
+                        {maskAmount(row.total_investment, isVisible, currency)}
                       </TableCell>
                       <TableCell>{row.created_date}</TableCell>
                       <TableCell>
@@ -275,10 +290,11 @@ export default function InvestmentTable({
                       >
                         <span>Total Investment</span>
                         <span>
-                          {investment[investment.length - 1].symbol || "NPR"}{" "}
-                          {investment[
-                            investment.length - 1
-                          ].total_investment?.toLocaleString() || "0"}
+                          {maskAmount(
+                            investment[investment.length - 1].total_investment,
+                            isVisible,
+                            currency,
+                          )}
                         </span>
                       </div>
                     </TableCell>
@@ -376,7 +392,7 @@ export default function InvestmentTable({
                 <div className="flex flex-col items-end">
                   {editingSn === row.sn ? (
                     <div className="flex items-center gap-1">
-                      <span className="text-xs text-gray-500">{row.symbol || "NPR"}</span>
+                      <span className="text-xs text-gray-500">{currency}</span>
                       <input
                         type="number"
                         className="w-24 p-1 text-sm border rounded focus:ring-1 focus:ring-[#FFAA00]"
@@ -391,8 +407,8 @@ export default function InvestmentTable({
                     </div>
                   ) : (
                     <span className="text-sm font-bold text-gray-800">
-                      Investment {row.symbol || "NPR"}{" "}
-                      {Number(row.add_investment).toLocaleString()}
+                      Investment{" "}
+                      {maskAmount(row.add_investment, isVisible, currency)}
                     </span>
                   )}
                 </div>
@@ -400,10 +416,12 @@ export default function InvestmentTable({
 
               {/* Row 3: Date and Total */}
               <div className="flex justify-between items-center">
-                <span className="text-xs text-gray-500">{row.created_date}</span>
+                <span className="text-xs text-gray-500">
+                  {row.created_date}
+                </span>
                 <span className="text-xs font-bold text-gray-700">
-                  Total Investment {row.symbol || "NPR"}{" "}
-                  {row.total_investment?.toLocaleString() || "0"}
+                  Total Investment{" "}
+                  {maskAmount(row.total_investment, isVisible, currency)}
                 </span>
               </div>
             </div>
@@ -419,10 +437,11 @@ export default function InvestmentTable({
             <div className="flex justify-between items-center">
               <span>Total Investment</span>
               <span>
-                {investment[investment.length - 1].symbol || "NPR"}{" "}
-                {investment[
-                  investment.length - 1
-                ].total_investment?.toLocaleString() || "0"}
+                {maskAmount(
+                  investment[investment.length - 1].total_investment,
+                  isVisible,
+                  currency,
+                )}
               </span>
             </div>
           </div>

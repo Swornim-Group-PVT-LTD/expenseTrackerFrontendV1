@@ -22,6 +22,10 @@ import { ExpenseResponse } from "../../../types/expenseType";
 import { getExpenseCategoriesService } from "@/app/services/catalogueServices/expenseCatalogueService";
 import { ExpenseCategoryResponse } from "@/app/types/catalolgueType/expenseCatalogueType";
 
+import { useBalanceVisibility } from "@/app/context/BalanceHideShowContext";
+import { useCurrency } from "@/app/context/CurrencyContext";
+import { maskAmount } from "@/app/utils/maskAmount";
+
 interface BalanceCardProps {
   refreshTrigger: number;
 }
@@ -49,6 +53,8 @@ export default function ExpensesTable({
   });
 
   const [categories, setCategories] = useState<ExpenseCategoryResponse[]>([]);
+  const { isVisible } = useBalanceVisibility();
+  const { currency } = useCurrency();
 
   const fetchExpenses = async () => {
     setLoading(true);
@@ -103,7 +109,9 @@ export default function ExpensesTable({
   const saveEdit = async (sn: string) => {
     // Validate category
     const categoryExists = categories.some(
-      (cat) => cat.expense_category.toLowerCase() === editForm.expense_category.toLowerCase()
+      (cat) =>
+        cat.expense_category.toLowerCase() ===
+        editForm.expense_category.toLowerCase(),
     );
 
     if (!categoryExists) {
@@ -122,12 +130,12 @@ export default function ExpensesTable({
         prev.map((item) =>
           item.sn === sn
             ? {
-              ...item,
-              add_expenses: editForm.add_expenses,
-              expense_category: editForm.expense_category,
-            }
-            : item
-        )
+                ...item,
+                add_expenses: editForm.add_expenses,
+                expense_category: editForm.expense_category,
+              }
+            : item,
+        ),
       );
 
       cancelEdit();
@@ -198,20 +206,26 @@ export default function ExpensesTable({
                         {row.id}
                       </TableCell>
                       <TableCell>
-                        {row.symbol || "NPR"}{" "}
                         {editingSn === row.sn ? (
-                          <input
-                            className="p-2 border rounded-md border-gray-300"
-                            value={editForm.add_expenses}
-                            onChange={(e) =>
-                              setEditForm((prev) => ({
-                                ...prev,
-                                add_expenses: Number(e.target.value),
-                              }))
-                            }
-                          />
+                          <>
+                            {row.symbol || "NPR"}{" "}
+                            <input
+                              className="p-2 border rounded-md border-gray-300"
+                              value={editForm.add_expenses}
+                              onChange={(e) =>
+                                setEditForm((prev) => ({
+                                  ...prev,
+                                  add_expenses: Number(e.target.value),
+                                }))
+                              }
+                            />
+                          </>
                         ) : (
-                          Number(row.add_expenses).toLocaleString()
+                          maskAmount(
+                            row.add_expenses,
+                            isVisible,
+                            row.symbol || "NPR",
+                          )
                         )}
                       </TableCell>
                       <TableCell>
@@ -236,8 +250,11 @@ export default function ExpensesTable({
                         )}
                       </TableCell>
                       <TableCell>
-                        {row.symbol || "NPR"}{" "}
-                        {row.total_expenses?.toLocaleString() || "0"}
+                        {maskAmount(
+                          row.total_expenses,
+                          isVisible,
+                          row.symbol || "NPR",
+                        )}
                       </TableCell>
                       <TableCell>{row.created_date}</TableCell>
                       <TableCell>
@@ -285,10 +302,11 @@ export default function ExpensesTable({
                       >
                         <span>Total Expenses</span>
                         <span>
-                          {expenses[expenses.length - 1].symbol || "NPR"}{" "}
-                          {expenses[
-                            expenses.length - 1
-                          ].total_expenses?.toLocaleString() || "0"}
+                          {maskAmount(
+                            expenses[expenses.length - 1].total_expenses,
+                            isVisible,
+                            expenses[expenses.length - 1].symbol || "NPR",
+                          )}
                         </span>
                       </div>
                     </TableCell>
@@ -386,7 +404,9 @@ export default function ExpensesTable({
                 <div className="flex flex-col items-end">
                   {editingSn === row.sn ? (
                     <div className="flex items-center gap-1">
-                      <span className="text-xs text-gray-500">{row.symbol || "NPR"}</span>
+                      <span className="text-xs text-gray-500">
+                        {row.symbol || "NPR"}
+                      </span>
                       <input
                         type="number"
                         className="w-24 p-1 text-sm border rounded focus:ring-1 focus:ring-[#FFAA00]"
@@ -401,8 +421,12 @@ export default function ExpensesTable({
                     </div>
                   ) : (
                     <span className="text-sm font-bold text-gray-800">
-                      Expenses {row.symbol || "NPR"}{" "}
-                      {Number(row.add_expenses).toLocaleString()}
+                      Expenses{" "}
+                      {maskAmount(
+                        row.add_expenses,
+                        isVisible,
+                        row.symbol || "NPR",
+                      )}
                     </span>
                   )}
                 </div>
@@ -414,8 +438,12 @@ export default function ExpensesTable({
                   {row.created_date}
                 </span>
                 <span className="text-xs font-bold text-gray-700">
-                  Total Expenses {row.symbol || "NPR"}{" "}
-                  {row.total_expenses?.toLocaleString() || "0"}
+                  Total Expenses{" "}
+                  {maskAmount(
+                    row.total_expenses,
+                    isVisible,
+                    row.symbol || "NPR",
+                  )}
                 </span>
               </div>
             </div>
@@ -431,8 +459,11 @@ export default function ExpensesTable({
             <div className="flex justify-between items-center">
               <span>Total Expenses</span>
               <span>
-                {expenses[expenses.length - 1].symbol || "NPR"}{" "}
-                {expenses[expenses.length - 1].total_expenses?.toLocaleString() || "0"}
+                {maskAmount(
+                  expenses[expenses.length - 1].total_expenses,
+                  isVisible,
+                  expenses[expenses.length - 1].symbol || "NPR",
+                )}
               </span>
             </div>
           </div>

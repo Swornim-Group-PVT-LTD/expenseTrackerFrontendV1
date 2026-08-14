@@ -2,33 +2,30 @@ import { ReactNode, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
-import ClipLoader  from "react-spinners/ClipLoader";
+import ClipLoader from "react-spinners/ClipLoader";
 
 import { getFilteredCardsDataService } from "../services/cardFitlerService";
-
+import { useBalanceVisibility } from "@/app/context/BalanceHideShowContext";
+import { maskAmount } from "@/app/utils/maskAmount";
 
 interface StatCardProps {
   icon: string;
   label: "income" | "expenses" | "saving" | "investment";
- 
+
   labelColor: string;
 }
 
 type FilterType = "daily" | "weekly" | "monthly" | "yearly" | "total";
 
-export default function StatCard({
-  icon,
-  label,
-  labelColor,
-}: StatCardProps) {
+export default function StatCard({ icon, label, labelColor }: StatCardProps) {
   const router = useRouter();
+  const { isVisible } = useBalanceVisibility();
 
   const handleClick = () => {
     router.push(`/dashboard/${label.toLowerCase()}`);
   };
 
   const getInitialValue = (label: string): FilterType => {
-    
     switch (label.toLowerCase()) {
       case "income":
         return "monthly";
@@ -41,16 +38,15 @@ export default function StatCard({
       default:
         return "total";
     }
-  }
-
+  };
 
   const [filterType, setFilterType] = useState<FilterType>(() => {
     const initial = getInitialValue(label);
     return initial;
   });
   const [value, setValue] = useState<number>(0);
-  const [loading,setLoading]=useState(false);
-  const [currency,setCurrency] = useState("Rs")
+  const [loading, setLoading] = useState(false);
+  const [currency, setCurrency] = useState("Rs");
 
   useEffect(() => {
     fetchStat();
@@ -58,20 +54,28 @@ export default function StatCard({
 
   const fetchStat = async () => {
     setLoading(true);
-    try{
-      const res = await getFilteredCardsDataService(filterType, label.toLowerCase());
+    try {
+      const res = await getFilteredCardsDataService(
+        filterType,
+        label.toLowerCase(),
+      );
       const total = res[`total_${label.toLowerCase()}`] ?? 0;
       setValue(Number(total));
-      
+
       setCurrency(res.currency.symbol || "Rs");
-    }
-    catch(error){
+    } catch (error) {
       console.error(`Failed to fetch ${label} data:`, error);
       setValue(0);
-    }
-    finally{
+    } finally {
       setLoading(false);
     }
+  };
+
+  const renderBalanceValue = () => {
+    if (loading) {
+      return <ClipLoader size={22} color="#000000" />;
+    }
+    return maskAmount(value, isVisible, currency);
   };
 
   return (
@@ -89,11 +93,9 @@ export default function StatCard({
           <div className="text-xl font-bold mb-1" style={{ color: labelColor }}>
             {label}
           </div>
-          <div className="text-2xl font-bold text-[#07371B] mb-1">{loading ? (
-            <ClipLoader size={22} color="#000000" />
-          ) : (
-            `${currency} ${value.toLocaleString()}`
-          )}</div>
+          <div className="text-2xl font-bold text-[#07371B] mb-1">
+            {renderBalanceValue()}
+          </div>
         </div>
       </div>
       <div className="text-xl flex justify-between">
