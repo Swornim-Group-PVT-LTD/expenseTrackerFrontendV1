@@ -65,7 +65,7 @@ const BalanceCard = ({ refreshTrigger }: BalanceCardProps) => {
 
   const renderBalanceValue = () => {
     if (loading) {
-      return <ClipLoader size={22} color="#07371B" />;
+      return <ClipLoader size={24} color="#07371B" />;
     }
     return maskAmount(balance ?? 0, isVisible, currency);
   };
