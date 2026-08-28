@@ -262,7 +262,7 @@ const ExpenseThreshold: React.FC<ExpenseThresholdProps> = ({
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-red-600 rounded"></div>
             <span className="text-gray-700">
-              <span className="font-semibold">Spent:</span> {data.symbol}{" "}
+              <span className="font-semibold">Spent:</span> {" "}
               {maskAmount(
                 Number(data.total_expenses) || 0,
                 isVisible,
@@ -277,7 +277,7 @@ const ExpenseThreshold: React.FC<ExpenseThresholdProps> = ({
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 bg-green-600 rounded"></div>
               <span className="text-gray-700">
-                <span className="font-semibold">Remaining:</span> {data.symbol}{" "}
+                <span className="font-semibold">Remaining:</span> {" "}
                 {maskAmount(
                   Number(data.remaining_amount) || 0,
                   isVisible,
