@@ -20,7 +20,7 @@ interface SavingFormProps {
 }
 
 const SavingForm = ({ onSuccess }: SavingFormProps) => {
-  const [amount, setAmount] = useState<number | "">(0);
+  const [amount, setAmount] = useState<number | "">();
   const [currency, setCurrency] = useState(""); // Auto from Balance API
   const [remarks, setRemarks] = useState("");
   const [loading, setLoading] = useState(false);
@@ -134,7 +134,6 @@ const SavingForm = ({ onSuccess }: SavingFormProps) => {
         <div className="mb-4 p-3 rounded-lg bg-[#44eeaa] border border-[#38A169]/30 flex items-center justify-between">
           <span className="text-md font-semibold text-white">Total Saving</span>
           <span className="text-xl font-bold text-white">
-            {currency}
             {maskAmount(totalSaving, isVisible, currency)}
           </span>
         </div>
@@ -142,31 +141,29 @@ const SavingForm = ({ onSuccess }: SavingFormProps) => {
         {/* ⭐ Input Row */}
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-6 items-stretch sm:items-center">
           {/* AUTO SYMBOL (from Balance API) */}
-          <div className="relative w-full sm:w-24">
-            <input
-              type="text"
-              className="w-full h-12 px-2 text-md font-bold text-[#716A6A]
-                border border-[#574A4A]/50 rounded bg-gray-100 cursor-not-allowed"
-              value={currency}
-              disabled
-            />
+          <div className="relative w-full">
+            <div
+              className="flex items-center h-12 border border-[#574A4A]/50 rounded 
+                  focus-within:border-[#FFA726] px-3 gap-2"
+            >
+              <span className="text-md font-bold text-[#716A6A] select-none">
+                {currency}
+              </span>
+              <input
+                type="number"
+                placeholder="Enter Amount"
+                className="flex-1 h-full bg-transparent text-md font-bold text-[#716A6A] 
+                 outline-none border-none
+                 [appearance:textfield] 
+                 [&::-webkit-outer-spin-button]:appearance-none 
+                 [&::-webkit-inner-spin-button]:appearance-none"
+                value={amount}
+                onChange={(e) =>
+                  setAmount(e.target.value === "" ? "" : Number(e.target.value))
+                }
+              />
+            </div>
           </div>
-
-          {/* Amount Input */}
-          <input
-            type="number"
-            placeholder="400000"
-            className="flex-1 h-12 min-h-[48px] px-3 text-md font-bold text-[#716A6A] 
-                   border border-[#574A4A]/50 rounded outline-none 
-                   focus:border-[#FFA726]
-                   [appearance:textfield] 
-                   [&::-webkit-outer-spin-button]:appearance-none 
-                   [&::-webkit-inner-spin-button]:appearance-none"
-            value={amount}
-            onChange={(e) =>
-              setAmount(e.target.value === "" ? "" : Number(e.target.value))
-            }
-          />
 
           {/* Remarks Selector */}
           <SearchInput
@@ -177,7 +174,7 @@ const SavingForm = ({ onSuccess }: SavingFormProps) => {
             value={remarks}
             onChange={setRemarks}
             placeholder="Type saving category..."
-            className="w-full sm:w-80"
+            className="w-full sm:w-80 text-gray-700"
           />
 
           {/* Submit Button */}

@@ -11,7 +11,7 @@ interface SimpleDateFilterProps {
   onFilter: (
     data: any,
     startDate?: string,
-    endDate?: string
+    endDate?: string,
   ) => void | Promise<void>;
   onDownloadPDF?: () => void;
   onDownloadExcel?: () => void;
@@ -41,7 +41,7 @@ export default function SimpleDateFilter({
 
   // To Date can use prop or today
   const [toDate, setToDate] = useState(
-    initialTo ? formatDateForInput(initialTo) : todayString
+    initialTo ? formatDateForInput(initialTo) : todayString,
   );
 
   const [isLoading, setIsLoading] = useState(false);
@@ -54,7 +54,7 @@ export default function SimpleDateFilter({
 
   const handleSearch = async (
     startDate: string = fromDate,
-    endDate: string = toDate
+    endDate: string = toDate,
   ) => {
     if (!startDate || !endDate) {
       toast.warning("Please select both dates");
@@ -90,7 +90,7 @@ export default function SimpleDateFilter({
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 lg:p-6 mb-6">
       <div className="flex flex-col lg:flex-row gap-4 lg:items-end">
         {/* Date Inputs */}
-        <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4 min-w-0">
           {/* From Date */}
           <div className="flex flex-col">
             <label
@@ -108,7 +108,7 @@ export default function SimpleDateFilter({
                 id="fromDate"
                 value={fromDate}
                 onChange={(e) => setFromDate(e.target.value)}
-                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors"
+                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors [appearance:none] [-webkit-appearance:none]"
               />
             </div>
           </div>
@@ -130,7 +130,7 @@ export default function SimpleDateFilter({
                 id="toDate"
                 value={toDate}
                 onChange={(e) => setToDate(e.target.value)}
-                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors"
+                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors [appearance:none] [-webkit-appearance:none]"
               />
             </div>
           </div>

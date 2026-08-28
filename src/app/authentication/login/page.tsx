@@ -28,9 +28,8 @@ const Login = () => {
             "Content-Type": "application/json",
           },
           withCredentials: true,
-        }
+        },
       );
-
 
       const token = res.data.access_token;
       const userData = res.data.user;

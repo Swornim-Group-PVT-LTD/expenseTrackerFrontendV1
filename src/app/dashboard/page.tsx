@@ -130,46 +130,25 @@ export default function Dashboard() {
 
       <div className="space-y-3 md:space-y-4">
         {/* Header + Add buttons */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 md:gap-4">
-          <h1 className="text-2xl font-bold">Dashboard</h1>
-
-          {/* Desktop buttons */}
-          <div className="hidden sm:block lg:col-span-2">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 mb-4 h-16">
-              {dashboardData.map((item, index) => (
-                <button
-                  key={index}
+        <div className="bg-white rounded-2xl shadow-sm p-5">
+          <div className="grid grid-cols-4 gap-3">
+            {dashboardData.map((item, index) => (
+              <button
+                key={index}
+                onClick={() => handleClick(item.title)}
+                className="flex flex-col items-center justify-center gap-2 transition-transform hover:scale-105 cursor-pointer"
+              >
+                <div
+                  className="w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center text-white shadow-md"
                   style={{ backgroundColor: item.labelColor }}
-                  className="text-white text-lg font-bold py-2 px-3 rounded hover:opacity-90 transition shadow-md cursor-pointer"
-                  onClick={() => handleClick(item.title)}
                 >
-                  {`Add ${item.title}`}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Mobile circular icons */}
-          <div className="sm:hidden lg:col-span-2">
-            <div className="grid grid-cols-4 gap-3 mb-4">
-              {dashboardData.map((item, index) => (
-                <button
-                  key={index}
-                  onClick={() => handleClick(item.title)}
-                  className="flex flex-col items-center justify-center transition-transform hover:scale-105 cursor-pointer"
-                >
-                  <div
-                    className="w-12 h-12 rounded-full flex items-center justify-center text-white shadow-md"
-                    style={{ backgroundColor: item.labelColor }}
-                  >
-                    {item.lucideIcon}
-                  </div>
-                  <span className="text-sm mt-1 font-bold text-gray-700 hidden sm:block">
-                    Add {item.title}
-                  </span>
-                </button>
-              ))}
-            </div>
+                  {item.lucideIcon}
+                </div>
+                <span className="text-xs md:text-sm font-semibold text-gray-800">
+                  {item.title}
+                </span>
+              </button>
+            ))}
           </div>
         </div>
 

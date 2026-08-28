@@ -49,7 +49,7 @@ export default function TopNav() {
 
   return (
     <div
-      className={`text-white h-16 bg-[#133840] shadow-lg z-40 flex items-center justify-between px-3 fixed top-0 right-0 left-0 transition-all duration-500 ${
+      className={`text-white h-16 bg-[#082c28] shadow-lg z-40 flex items-center justify-between px-3 fixed top-0 right-0 left-0 transition-all duration-500 ${
         collapsed ? "md:ml-20" : "md:ml-64"
       }`}
     >
@@ -67,15 +67,19 @@ export default function TopNav() {
 
       {/* Welcome message - Show on mobile, positioned left */}
       <div className="md:hidden">
-        <span className="text-white text-lg font-bold">
-          Welcome, {user?.first_name}
+        <span className="text-white text-2xl font-bold">
+          <span className="text-sm font-medium text-gray-200">
+            Welcome back,
+          </span>
+          <br />
+          {user?.first_name}
         </span>
       </div>
 
       <div className="flex items-center gap-2 pr-2 md:gap-3">
         {/* Welcome message - Hidden on mobile, shown on desktop */}
         <span className="text-white text-lg font-bold hidden md:block">
-          Welcome, {user?.first_name}
+          Welcome back, {user?.first_name}
         </span>
 
         <div
@@ -121,12 +125,21 @@ export default function TopNav() {
           )}
         </div>
 
+        <div className="relative">
+          <div className="w-10 h-10 rounded-full flex items-center justify-center cursor-pointer hover:bg-white/10 transition-colors">
+            <Bell className="w-5 h-5 text-white" />
+          </div>
+          <div className="absolute -top-1 -right-1 w-4 h-4 bg-[#FDC300] rounded-full flex items-center justify-center">
+            <span className="text-[#082c28] text-[8px] font-bold">1</span>
+          </div>
+        </div>
+
         {/* Balance visibility toggle - grouped with the bell as the utility-icon cluster */}
         <button
           onClick={toggleVisibility}
           aria-label={isVisible ? "Hide balances" : "Show balances"}
           title={isVisible ? "Hide balances" : "Show balances"}
-          className="w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center text-[#004299] cursor-pointer  bg-[#FDC300] hover:bg-[#FDC300]/90 transition-colors "
+          className="w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center text-white cursor-pointer bg-white/10 hover:bg-white/20 transition-colors"
         >
           {isVisible ? (
             <Eye size={18} className="md:w-5 md:h-5" />
@@ -134,15 +147,6 @@ export default function TopNav() {
             <EyeOff size={18} className="md:w-5 md:h-5" />
           )}
         </button>
-
-        <div className="relative">
-          <div className="w-10 h-10 rounded-full bg-[#FDC300] flex items-center justify-center cursor-pointer hover:bg-[#FDC300]/90 transition-colors">
-            <Bell className="w-4 h-4 text-[#004299]" />
-          </div>
-          <div className="absolute -top-1 -right-1 w-4 h-4 bg-[#004299] rounded-full flex items-center justify-center">
-            <span className="text-white text-[8px] font-bold">1</span>
-          </div>
-        </div>
       </div>
     </div>
   );
