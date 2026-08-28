@@ -101,7 +101,7 @@ const BalanceCard = ({ refreshTrigger }: BalanceCardProps) => {
             </button>
           </div>
 
-          <span className="text-2xl md:text-3xl font-bold text-[#0B3D2E] mt-1 truncate">
+          <span className="text-3xl md:text-4xl font-bold text-[#0B3D2E] mt-1 truncate">
             {renderBalanceValue()}
           </span>
 
