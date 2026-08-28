@@ -76,13 +76,17 @@ export default function Sidebar() {
   const [showAddMenu, setShowAddMenu] = useState(false);
 
   // Separate add categories from other nav items
-  const addCategories = dashboardData.filter(item => 
-    ['income', 'expenses', 'savings', 'investment'].includes(item.title)
+  const addCategories = dashboardData.filter((item) =>
+    ["income", "expenses", "savings", "investment"].includes(item.title),
   );
-  
-  const otherNavItems = dashboardData.filter(item => 
-    !['income', 'expenses', 'savings', 'investment'].includes(item.title)
+
+  const otherNavItems = dashboardData.filter(
+    (item) =>
+      !["income", "expenses", "savings", "investment"].includes(item.title),
   );
+
+  const leftNavItems = otherNavItems.slice(0, 2);
+  const rightNavItems = otherNavItems.slice(2);
 
   return (
     <>
@@ -90,11 +94,11 @@ export default function Sidebar() {
       <aside
         className={`hidden md:flex ${
           collapsed ? "w-20" : "w-64"
-        } bg-[var(--color1)] text-white transition-all duration-500 ease-in-out flex-col h-screen fixed left-0 top-0 z-50`}
+        } bg-[#082c28] text-white transition-all duration-500 ease-in-out flex-col h-screen fixed left-0 top-0 z-50`}
       >
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="p-4 hover:bg-[#2a2a2a] flex items-center justify-center transition-colors duration-200"
+          className="p-4 hover:bg-white/10 flex items-center justify-center transition-colors duration-200"
         >
           <Menu className="h-6 w-6" />
         </button>
@@ -107,7 +111,7 @@ export default function Sidebar() {
                 key={i}
                 href={item.href}
                 className={`flex items-center gap-3 px-4 py-3 cursor-pointer rounded-lg transition-all duration-300 ease-in-out ${
-                  isActive ? "bg-[var(--color2)]" : "hover:bg-[#2a2a2a]"
+                  isActive ? "bg-[var(--color2)]" : "hover:bg-white/10"
                 }`}
               >
                 <div
@@ -125,7 +129,7 @@ export default function Sidebar() {
                   }`}
                 >
                   {t(item.title)}
-                  
+
                   {/* {item.title} */}
                 </span>
               </Link>
@@ -135,10 +139,10 @@ export default function Sidebar() {
       </aside>
 
       {/* Mobile Bottom Nav */}
-      <nav className="md:hidden fixed bottom-0 left-0 w-full bg-[var(--color1)] text-white flex justify-around items-center h-20 z-50 shadow-lg">
+      <nav className="md:hidden fixed bottom-0 left-0 w-full bg-[#082c28] text-white flex justify-around items-center h-20 z-50 shadow-lg rounded-t-3xl">
         {/* Add Menu Dropdown */}
         {showAddMenu && (
-          <div className="absolute bottom-20 left-0 w-full bg-[var(--color1)] border-t border-gray-600 p-4">
+          <div className="absolute bottom-20 left-0 w-full bg-[#082c28] border-t border-white/10 p-4">
             <div className="grid grid-cols-2 gap-4">
               {addCategories.map((item, i) => {
                 const isActive = pathname === item.href;
@@ -151,7 +155,9 @@ export default function Sidebar() {
                   >
                     <div
                       className={`p-2 rounded-lg flex items-center justify-center ${
-                        isActive ? "border-[var(--color2)] border-2" : item.color
+                        isActive
+                          ? "border-[var(--color2)] border-2"
+                          : item.color
                       }`}
                     >
                       {item.icon}
@@ -169,19 +175,19 @@ export default function Sidebar() {
             </div>
           </div>
         )}
-        
-        {/* Main Nav Items */}
-        {otherNavItems.map((item, i) => {
+
+        {/* Left Nav Items */}
+        {leftNavItems.map((item, i) => {
           const isActive = pathname === item.href;
           return (
             <Link
               key={i}
               href={item.href}
-              className="flex flex-col items-center justify-center text-xs transition-colors"
+              className="flex flex-col items-center justify-center text-xs transition-colors mr-4"
             >
               <div
-                className={`p-2 rounded-lg flex items-center justify-center ${
-                  isActive ? "border-[var(--color2)] border-2" : item.color
+                className={`flex items-center justify-center transition-colors duration-200 ${
+                  isActive ? "text-[var(--color2)]" : "text-white/80"
                 }`}
               >
                 {item.icon}
@@ -196,17 +202,44 @@ export default function Sidebar() {
             </Link>
           );
         })}
-        
+
         {/* Add Button */}
         <button
           onClick={() => setShowAddMenu(!showAddMenu)}
-          className="flex flex-col items-center justify-center text-xs transition-colors"
+          className="absolute left-1/2 -translate-x-1/2 -top-9 flex flex-col items-center justify-center"
         >
-          <div className="p-2 rounded-lg flex items-center justify-center bg-green-600">
-            <Plus className="h-6 w-6" />
+          <div className="h-14 w-14 rounded-full bg-green-600 border-4 border-[#082c28] flex items-center justify-center shadow-lg">
+            <Plus className="h-6 w-6 text-white" />
           </div>
-          <span className="text-[10px] mt-1">Add</span>
+          <span className="text-[10px] mt-1 text-white font-semibold">Add</span>
         </button>
+
+        {/* Right Nav Items */}
+        {rightNavItems.map((item, i) => {
+          const isActive = pathname === item.href;
+          return (
+            <Link
+              key={i}
+              href={item.href}
+              className="flex flex-col items-center justify-center text-xs transition-colors ml-4"
+            >
+              <div
+                className={`flex items-center justify-center transition-colors duration-200 ${
+                  isActive ? "text-[var(--color2)]" : "text-white/80"
+                }`}
+              >
+                {item.icon}
+              </div>
+              <span
+                className={`text-[10px] mt-1 ${
+                  isActive ? "text-[var(--color2)] font-semibold" : ""
+                }`}
+              >
+                {item.title}
+              </span>
+            </Link>
+          );
+        })}
       </nav>
     </>
   );

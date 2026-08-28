@@ -20,7 +20,7 @@ interface ExpenseFormProps {
 }
 
 const ExpenseForm = ({ onSuccess }: ExpenseFormProps) => {
-  const [amount, setAmount] = useState<number | "">(0);
+  const [amount, setAmount] = useState<number | "">();
   const [currency, setCurrency] = useState(""); // auto from Balance API
   const [remarks, setRemarks] = useState("");
   const [loading, setLoading] = useState(false);
@@ -137,32 +137,29 @@ const ExpenseForm = ({ onSuccess }: ExpenseFormProps) => {
         {/* ⭐ Input Section */}
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-6 items-stretch sm:items-center">
           {/* AUTO SYMBOL (from Balance API) */}
-          <div className="relative w-full sm:w-24">
-            <input
-              type="text"
-              className="w-full h-12 px-2 text-md font-bold text-[#716A6A]
-                     border border-[#574A4A]/50 rounded bg-gray-100 cursor-not-allowed"
-              value={currency}
-              disabled
-            />
+          <div className="relative w-full">
+            <div
+              className="flex items-center h-12 border border-[#574A4A]/50 rounded 
+                  focus-within:border-[#FFA726] px-3 gap-2"
+            >
+              <span className="text-md font-bold text-[#716A6A] select-none">
+                {currency}
+              </span>
+              <input
+                type="number"
+                placeholder="Enter Amount"
+                className="flex-1 h-full bg-transparent text-md font-bold text-[#716A6A] 
+                 outline-none border-none
+                 [appearance:textfield] 
+                 [&::-webkit-outer-spin-button]:appearance-none 
+                 [&::-webkit-inner-spin-button]:appearance-none"
+                value={amount}
+                onChange={(e) =>
+                  setAmount(e.target.value === "" ? "" : Number(e.target.value))
+                }
+              />
+            </div>
           </div>
-
-          {/* Amount input - FIXED with min-height */}
-          <input
-            type="number"
-            inputMode="decimal"
-            placeholder="0"
-            className="flex-1 h-12 min-h-[48px] px-3 text-md font-bold text-[#716A6A] 
-                   border border-[#574A4A]/50 rounded outline-none 
-                   focus:border-[#FFA726]
-                   [appearance:textfield] 
-                   [&::-webkit-outer-spin-button]:appearance-none 
-                   [&::-webkit-inner-spin-button]:appearance-none"
-            value={amount}
-            onChange={(e) =>
-              setAmount(e.target.value === "" ? "" : Number(e.target.value))
-            }
-          />
 
           {/* Remarks dropdown */}
           <SearchInput
@@ -173,7 +170,7 @@ const ExpenseForm = ({ onSuccess }: ExpenseFormProps) => {
             value={remarks}
             onChange={setRemarks}
             placeholder="Type expense category..."
-            className="w-full sm:w-80"
+            className="w-full sm:w-80 text-gray-700"
           />
 
           {/* Submit button */}

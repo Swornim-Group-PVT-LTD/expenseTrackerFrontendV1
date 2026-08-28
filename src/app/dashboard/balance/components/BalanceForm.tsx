@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Plus, Info } from "lucide-react";
 import Swal from "sweetalert2";
 
 // Services
@@ -54,6 +54,7 @@ export default function BalanceForm({ onSuccess }: { onSuccess?: () => void }) {
 
     init();
   }, []);
+
   const handleAddBalance = async () => {
     if (balanceExists) {
       Swal.fire({
@@ -98,53 +99,68 @@ export default function BalanceForm({ onSuccess }: { onSuccess?: () => void }) {
   };
 
   return (
-    <div className="w-full max-w-2xl">
-      <div className="flex items-center gap-2">
+    <div className="w-full max-w-2xl bg-white rounded-2xl shadow-sm p-6">
+      <div className="flex items-end gap-3">
         {/* Currency Dropdown */}
-        <div className="relative">
-          <select
-            className="appearance-none w-24 h-12 px-2 text-md font-bold text-[#716A6A] border border-[#574A4A]/50 rounded cursor-pointer bg-white"
-            value={currencyId ?? ""}
-            onChange={(e) => {
-              const selected = currencyList.find(
-                (item) => item.id === Number(e.target.value),
-              );
+        <div className="flex flex-col gap-1.5">
+          <label className="text-sm font-medium text-gray-700">
+            Select Currency
+          </label>
+          <div className="relative">
+            <select
+              className="appearance-none w-28 h-12 pl-3 pr-8 text-base font-medium text-gray-800 border border-gray-300 rounded-lg cursor-pointer bg-white outline-none focus:border-green-600"
+              value={currencyId ?? ""}
+              onChange={(e) => {
+                const selected = currencyList.find(
+                  (item) => item.id === Number(e.target.value),
+                );
 
-              if (selected) {
-                setCurrencySymbol(selected.symbol);
-                setCurrencyId(selected.id);
-              }
-            }}
-          >
-            {currencyList.map((item) => (
-              <option key={item.id} value={item.id}>
-                {item.symbol}
-              </option>
-            ))}
-          </select>
+                if (selected) {
+                  setCurrencySymbol(selected.symbol);
+                  setCurrencyId(selected.id);
+                }
+              }}
+            >
+              {currencyList.map((item) => (
+                <option key={item.id} value={item.id}>
+                  {item.symbol}
+                </option>
+              ))}
+            </select>
 
-          <ChevronDown className="absolute right-1 top-1/2 -translate-y-1/2 w-3 h-3 text-[#716A6A] pointer-events-none" />
+            <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
+          </div>
         </div>
 
         {/* Amount Input */}
-        <input
-          type="number"
-          placeholder="400000"
-          className="flex-1 h-12 px-3 text-sm text-[#716A6A] border border-[#574A4A]/50 rounded outline-none focus:border-[#FFA726]"
-          value={amount}
-          onChange={(e) =>
-            setAmount(e.target.value === "" ? "" : Number(e.target.value))
-          }
-        />
+        <div className="flex flex-col gap-1.5 flex-1">
+          <label className="text-sm font-medium text-gray-700">Amount</label>
+          <input
+            type="number"
+            placeholder="40,000"
+            className="w-full h-12 px-3 text-base text-gray-800 border border-gray-300 rounded-lg bg-gray-50 outline-none focus:border-green-600"
+            value={amount}
+            onChange={(e) =>
+              setAmount(e.target.value === "" ? "" : Number(e.target.value))
+            }
+          />
+        </div>
 
         {/* Submit Button */}
         <button
           onClick={handleAddBalance}
           disabled={loading}
-          className="bg-[#FFAA00] hover:bg-[#FFAA00]/90 text-white font-bold text-md px-6 h-12 rounded transition-colors disabled:opacity-50 cursor-pointer"
+          className="flex items-center gap-1.5 bg-[#297513] hover:bg-green-800 text-white font-semibold text-base px-6 h-12 rounded-lg transition-colors disabled:opacity-50 cursor-pointer"
         >
+          <Plus className="w-4 h-4" strokeWidth={3} />
           {loading ? "Saving..." : "Add"}
         </button>
+      </div>
+
+      {/* Helper text */}
+      <div className="flex items-center gap-1.5 mt-3 text-sm text-gray-500">
+        <Info className="w-4 h-4" />
+        <span>This amount will be added to your total balance.</span>
       </div>
     </div>
   );

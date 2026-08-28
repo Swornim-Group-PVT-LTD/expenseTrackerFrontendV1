@@ -4,12 +4,11 @@ import ClipLoader from "react-spinners/ClipLoader";
 
 import { getBalancesService } from "@/app/services/balanceService";
 import { BalanceResponse } from "@/app/types/balanceType";
-import StatCard from "@/app/components/statcard";
 import { useRouter } from "next/navigation";
 
 import { useBalanceVisibility } from "@/app/context/BalanceHideShowContext";
 import { maskAmount } from "@/app/utils/maskAmount";
-import { Eye, EyeOff } from "lucide-react";
+import { Wallet, EyeOff, Eye, TrendingUp, TrendingDown } from "lucide-react";
 
 interface BalanceCardProps {
   refreshTrigger: number;
@@ -17,6 +16,7 @@ interface BalanceCardProps {
 
 const BalanceCard = ({ refreshTrigger }: BalanceCardProps) => {
   const [balance, setBalance] = useState<number | null>(null);
+  const [changePercent, setChangePercent] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [currency, setCurrency] = useState("NPR");
   const { isVisible, toggleVisibility } = useBalanceVisibility();
@@ -43,10 +43,18 @@ const BalanceCard = ({ refreshTrigger }: BalanceCardProps) => {
 
         setCurrency(balance.currency?.symbol || "NPR");
         setBalance(latestBalance);
+
+        // Optional: percentage vs last month, if the API returns it
+        if (typeof (balance as any).change_percent === "number") {
+          setChangePercent((balance as any).change_percent);
+        } else {
+          setChangePercent(null);
+        }
       } catch (error) {
         console.error("Error fetching balance:", error);
         setBalance(0);
         setCurrency("NPR");
+        setChangePercent(null);
       } finally {
         setLoading(false);
       }
@@ -57,45 +65,50 @@ const BalanceCard = ({ refreshTrigger }: BalanceCardProps) => {
 
   const renderBalanceValue = () => {
     if (loading) {
-      return <ClipLoader size={22} color="#000000" />;
+      return <ClipLoader size={22} color="#07371B" />;
     }
     return maskAmount(balance ?? 0, isVisible, currency);
   };
 
+  const isPositive = (changePercent ?? 0) >= 0;
+
   return (
     <div
       onClick={handleClick}
-      className="bg-white rounded-lg shadow-md p-3 flex flex-col gap-4 h-36 mt-2 hover:shadow-lg transition-shadow hover:scale-[1.02] hover:cursor-pointer"
+      className="relative overflow-hidden rounded-2xl shadow-sm p-5 h-36 flex items-center justify-between gap-4 hover:shadow-md transition-shadow hover:cursor-pointer"
+      style={{
+        background: "linear-gradient(135deg, #EAF3EC 0%, #F5FAF6 60%)",
+      }}
     >
-      <div className="relative flex items-start gap-2 mb-1">
-        <img
-          src="/balance-logo.svg"
-          alt="Balance"
-          className="absolute -top-8 left-6 w-12 h-12 md:w-16 md:h-16 shrink-0"
-        />
-        <div className="flex flex-col items-end w-full align-bottom min-w-0">
-          <div className="text-xl font-bold mb-1" style={{ color: "#000000" }}>
-            Balance
-          </div>
-          <div className="text-2xl font-bold text-[#07371B] mb-1 flex items-center gap-2">
+      {/* Left: icon + amount */}
+      <div className="flex items-start gap-3 min-w-0">
+        <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-[#0B3D2E] flex items-center justify-center shrink-0 shadow-sm">
+          <Wallet className="w-6 h-6 text-white" />
+        </div>
+
+        <div className="flex flex-col min-w-0">
+          <div className="flex items-center gap-2">
+            <span className="text-base font-bold text-[#0B3D2E]">
+              Total Balance
+            </span>
             <button
               onClick={handleToggleVisibility}
               aria-label={isVisible ? "Hide balance" : "Show balance"}
               title={isVisible ? "Hide balance" : "Show balance"}
-              className="text-[#07371B]/60 hover:text-[#07371B] transition-colors cursor-pointer shrink-0"
+              className="text-[#0B3D2E]/50 hover:text-[#0B3D2E] transition-colors cursor-pointer shrink-0"
             >
-              {isVisible ? (
-                <Eye size={18} className="md:w-5 md:h-5" />
-              ) : (
-                <EyeOff size={18} className="md:w-5 md:h-5" />
-              )}
+              {isVisible ? <Eye size={16} /> : <EyeOff size={16} />}
             </button>
-            {renderBalanceValue()}
           </div>
+
+          <span className="text-2xl md:text-3xl font-bold text-[#0B3D2E] mt-1 truncate">
+            {renderBalanceValue()}
+          </span>
+
+          <span className="text-sm text-[#0B3D2E]/60 mt-1">
+            Your current balance
+          </span>
         </div>
-      </div>
-      <div className="text-xl text-right">
-        <span className="text-black/70 font-bold">Your Balance</span>
       </div>
     </div>
   );
