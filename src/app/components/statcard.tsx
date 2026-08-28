@@ -1,7 +1,11 @@
-import { ReactNode, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronRight, TrendingUp, TrendingDown } from "lucide-react";
-import { useState } from "react";
+import {
+  ChevronDown,
+  ChevronRight,
+  TrendingUp,
+  TrendingDown,
+} from "lucide-react";
 import ClipLoader from "react-spinners/ClipLoader";
 
 import { getFilteredCardsDataService } from "../services/cardFitlerService";
@@ -31,7 +35,11 @@ const labelTitle: Record<StatCardProps["label"], string> = {
   investment: "Total Investments",
 };
 
-export default function StatCard({ icon, label, labelColor }: StatCardProps) {
+export default function StatCard({
+  icon,
+  label,
+  labelColor,
+}: StatCardProps) {
   const router = useRouter();
   const { isVisible } = useBalanceVisibility();
 
@@ -43,18 +51,26 @@ export default function StatCard({ icon, label, labelColor }: StatCardProps) {
     switch (label.toLowerCase()) {
       case "income":
         return "monthly";
+
       case "expenses":
         return "monthly";
+
       case "saving":
         return "total";
+
       case "investment":
         return "total";
+
       default:
         return "total";
     }
   };
 
-  const [filterType] = useState<FilterType>(() => getInitialValue(label));
+  // IMPORTANT: Keep the setter so the filter can be changed
+  const [filterType, setFilterType] = useState<FilterType>(() =>
+    getInitialValue(label)
+  );
+
   const [value, setValue] = useState<number>(0);
   const [changePercent, setChangePercent] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
@@ -66,16 +82,19 @@ export default function StatCard({ icon, label, labelColor }: StatCardProps) {
 
   const fetchStat = async () => {
     setLoading(true);
+
     try {
       const res = await getFilteredCardsDataService(
         filterType,
         label.toLowerCase(),
       );
+
       const total = res[`total_${label.toLowerCase()}`] ?? 0;
+
       setValue(Number(total));
       setCurrency(res.currency?.symbol || "Rs");
 
-      // Optional: percentage vs last period, if the API returns it
+      // Optional: percentage vs previous period
       if (typeof res.change_percent === "number") {
         setChangePercent(res.change_percent);
       } else {
@@ -83,6 +102,7 @@ export default function StatCard({ icon, label, labelColor }: StatCardProps) {
       }
     } catch (error) {
       console.error(`Failed to fetch ${label} data:`, error);
+
       setValue(0);
       setChangePercent(null);
     } finally {
@@ -94,6 +114,7 @@ export default function StatCard({ icon, label, labelColor }: StatCardProps) {
     if (loading) {
       return <ClipLoader size={20} color={labelColor} />;
     }
+
     return maskAmount(value, isVisible, currency);
   };
 
@@ -104,8 +125,10 @@ export default function StatCard({ icon, label, labelColor }: StatCardProps) {
       onClick={handleClick}
       className="bg-white rounded-2xl shadow-sm p-4 flex flex-col gap-3 hover:shadow-md transition-shadow hover:cursor-pointer"
     >
+      {/* Top section */}
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-3 min-w-0">
+          {/* Icon */}
           <div
             className="w-12 h-12 md:w-14 md:h-14 rounded-xl flex items-center justify-center shrink-0"
             style={{ backgroundColor: `${labelColor}1A` }}
@@ -117,22 +140,26 @@ export default function StatCard({ icon, label, labelColor }: StatCardProps) {
             />
           </div>
 
+          {/* Title + amount */}
           <div className="flex flex-col min-w-0">
             <span
               className="text-base font-semibold"
               style={{ color: labelColor }}
             >
-              {labelTitle[label.toLowerCase() as StatCardProps["label"]]}
+              {labelTitle[label]}
             </span>
+
             <span className="text-2xl font-semibold text-[#07371B] truncate">
               {renderBalanceValue()}
             </span>
+
             <span className="text-sm text-gray-400">
               {periodText[filterType]}
             </span>
           </div>
         </div>
 
+        {/* Percentage */}
         {changePercent !== null && (
           <div className="flex flex-col items-end shrink-0">
             <div
@@ -147,20 +174,55 @@ export default function StatCard({ icon, label, labelColor }: StatCardProps) {
               ) : (
                 <TrendingDown className="w-3.5 h-3.5" />
               )}
+
               {Math.abs(changePercent)}%
             </div>
-            <span className="text-xs text-gray-400 mt-1">vs last month</span>
+
+            <span className="text-xs text-gray-400 mt-1">
+              vs last month
+            </span>
           </div>
         )}
       </div>
 
-      {/* Bottom row: view details link */}
-      <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-        <span className="text-sm font-medium" style={{ color: labelColor }}>
-          View {label} details
-        </span>
-        <ChevronRight className="w-4 h-4 text-gray-400" />
+      {/* Filter + View details */}
+      <div
+        className="flex items-center justify-between pt-2 border-t border-gray-100 gap-2"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Filter */}
+        <div className="relative w-32 shrink-0">
+          <select
+            value={filterType}
+            onChange={(e) =>
+              setFilterType(e.target.value as FilterType)
+            }
+            onClick={(e) => e.stopPropagation()}
+            className="appearance-none w-full py-1.5 pl-3 pr-8 text-sm font-medium text-[#716A6A] border border-[#574A4A]/30 rounded-lg bg-white cursor-pointer focus:outline-none focus:ring-1"
+          >
+            <option value="yearly">Yearly</option>
+            <option value="monthly">Monthly</option>
+            <option value="weekly">Weekly</option>
+            <option value="daily">Daily</option>
+            <option value="total">Total</option>
+          </select>
+
+          <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-[#716A6A] pointer-events-none" />
+        </div>
+
+        {/* View details */}
+        <div className="flex items-center gap-1 min-w-0">
+          <span
+            className="text-sm font-medium truncate"
+            style={{ color: labelColor }}
+          >
+            View {label} details
+          </span>
+
+          <ChevronRight className="w-4 h-4 text-gray-400 shrink-0" />
+        </div>
       </div>
     </div>
   );
 }
+
