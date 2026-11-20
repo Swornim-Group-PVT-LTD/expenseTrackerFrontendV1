@@ -1,9 +1,8 @@
 "use client";
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import BASE_URL from "@/app/urlConfig/urlConfig";
+import { loginService } from "@/app/services/loginService";
 
 import { useAuth } from "@/context/AuthContext";
 
@@ -16,36 +15,18 @@ const Login = () => {
 
   const router = useRouter();
 
-  useEffect(() => {
-    if (new URLSearchParams(window.location.search).get("session") === "expired") {
-      setMessage("Your session expired. Please log in again.");
-    }
-  }, []);
-
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
-      const res = await axios.post(
-        `${BASE_URL}/api/login`,
-        { email, password },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        },
-      );
+      const response = await loginService({ email, password });
 
-      const token = res.data.access_token;
-      const userData = res.data.user;
-
-      login(userData);
-      document.cookie = `access_token=${token}; path=/; Secure; SameSite=Strict`;
-      setMessage(res.data.message);
+      login(response.user);
+      document.cookie = `access_token=${response.access_token}; path=/; Secure; SameSite=Strict`;
+      setMessage(response.message);
       router.push("/dashboard");
-    } catch (error: any) {
-      setMessage(`${error.response?.data?.message || "Login failed"}`);
+    } catch (error: unknown) {
+      setMessage(error instanceof Error ? error.message : "Login failed");
     }
   };
 
@@ -89,7 +70,7 @@ const Login = () => {
           </button>
 
           <div className="font-bold text-center">
-            Don't have an account?
+            Don&apos;t have an account?
             <Link href="/authentication/register">Register</Link>
           </div>
         </form>

@@ -1,6 +1,6 @@
 import axios from "axios";
 import BASE_URL from "@/app/urlConfig/urlConfig";
-import { LoginPayload, LoginResponse } from "../types/loginType";
+import type { LoginPayload, LoginResponse } from "../types/loginType";
 
 export const loginService = async (payload: LoginPayload): Promise<LoginResponse> => {
   try {
@@ -13,7 +13,11 @@ export const loginService = async (payload: LoginPayload): Promise<LoginResponse
       }
     );
     return response.data;
-  } catch (error: any) {
-    throw new Error(error.response?.data?.message || "Login failed");
+  } catch (error: unknown) {
+    if (axios.isAxiosError<{ message?: string }>(error)) {
+      throw new Error(error.response?.data?.message || "Login failed");
+    }
+
+    throw new Error("Login failed");
   }
 };
