@@ -1,5 +1,5 @@
 // services/SavingService.ts
-import axios from "axios";
+import protectedApi from "@/app/services/protectedApi";
 import BASE_URL from "@/app/urlConfig/urlConfig";
 
 import { AddSavingPayload, SavingResponse,TotalSavingResponse } from "@/app/types/savingType";
@@ -17,7 +17,7 @@ export const addSavingService = async (
 ): Promise<SavingResponse> => {
   try {
     const token = getToken();
-    const response = await axios.post<SavingResponse>(
+    const response = await protectedApi.post<SavingResponse>(
       `${BASE_URL}/api/savings`,
       payload,
       {
@@ -39,7 +39,7 @@ export const getSavingService = async (): Promise<SavingResponse[]> => {
   try {
     const token = getToken();
 
-    const response = await axios.get(`${BASE_URL}/api/savings`, {
+    const response = await protectedApi.get(`${BASE_URL}/api/savings`, {
       headers: { "Authorization": `Bearer ${token}` },
     });
 
@@ -74,7 +74,7 @@ export const updateSavingService = async (
 ): Promise<SavingResponse[]> => {
   try {
     const token = getToken();
-    const response = await axios.put<SavingResponse[]>(
+    const response = await protectedApi.put<SavingResponse[]>(
       `${BASE_URL}/api/savings/update/${sn}`,
       payload,
       {
@@ -97,7 +97,7 @@ export const updateSavingService = async (
 export const deleteSavingService = async (sn: string): Promise<void> => {
   try {
     const token = getToken();
-    await axios.delete(`${BASE_URL}/api/savings/delete/${sn}`, {
+    await protectedApi.delete(`${BASE_URL}/api/savings/delete/${sn}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
   } catch (error: any) {
@@ -123,7 +123,7 @@ export const getSavingByDateRangeService = async (from?: string, to?: string, ca
       params.saving_category = category;
     }
 
-    const response = await axios.get(`${BASE_URL}/api/savings`, {
+    const response = await protectedApi.get(`${BASE_URL}/api/savings`, {
       headers: { Authorization: `Bearer ${token}` },
       params,
     });
@@ -154,7 +154,7 @@ export const getSavingByDateRangeService = async (from?: string, to?: string, ca
 export const getTotalSavingService = async (): Promise<number> => {
   try {
     const token = getToken();
-    const response = await axios.get<TotalSavingResponse>(`${BASE_URL}/api/saving/total`, {
+    const response = await protectedApi.get<TotalSavingResponse>(`${BASE_URL}/api/saving/total`, {
       headers: { Authorization: `Bearer ${token}` },
       withCredentials: true,
     });

@@ -1,4 +1,4 @@
-import axios from "axios";
+import protectedApi from "@/app/services/protectedApi";
 import BASE_URL from "@/app/urlConfig/urlConfig";
 import { StatementEntry, StatementResponse } from "../types/statementType";
 
@@ -18,7 +18,7 @@ export const getStatementByDateRangeService = async (from?: string, to?: string)
       params.to_date = to;
     }
 
-    const response = await axios.get(`${BASE_URL}/api/balances/account-statement`, {
+    const response = await protectedApi.get(`${BASE_URL}/api/balances/account-statement`, {
       headers: { Authorization: `Bearer ${token}` },
       params,
     });

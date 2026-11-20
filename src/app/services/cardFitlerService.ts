@@ -9,7 +9,7 @@ const getToken = (): string => {
 };
 
 
-const axios = require("axios");
+import protectedApi from "@/app/services/protectedApi";
 import BASE_URL from "@/app/urlConfig/urlConfig";
 // ----------------------------
 // Get Filtered Cards Data
@@ -21,7 +21,7 @@ export const getFilteredCardsDataService = async (
   try {
     const token = getToken();  
     
-    const response = await axios.get(`${BASE_URL}/api/${category}/total?filter=${filterType}`, {
+    const response = await protectedApi.get(`${BASE_URL}/api/${category}/total?filter=${filterType}`, {
       headers: { Authorization: `Bearer ${token}` },
       withCredentials: true,
     });

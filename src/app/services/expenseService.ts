@@ -1,5 +1,5 @@
 // services/expenseService.ts
-import axios from "axios";
+import protectedApi from "@/app/services/protectedApi";
 import BASE_URL from "@/app/urlConfig/urlConfig";
 import { AddExpensePayload, ExpenseResponse,TotalExpenseResponse } from "../types/expenseType";
 
@@ -17,7 +17,7 @@ export const addExpenseService = async (
 ): Promise<ExpenseResponse> => {
   try {
     const token = getToken();
-    const response = await axios.post<ExpenseResponse>(
+    const response = await protectedApi.post<ExpenseResponse>(
       `${BASE_URL}/api/expenses`,
       payload,
       {
@@ -38,7 +38,7 @@ export const addExpenseService = async (
 export const getExpenseService = async (): Promise<ExpenseResponse[]> => {
   try {
     const token = getToken();
-    const response = await axios.get(`${BASE_URL}/api/expenses`, {
+    const response = await protectedApi.get(`${BASE_URL}/api/expenses`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -69,7 +69,7 @@ export const getExpenseService = async (): Promise<ExpenseResponse[]> => {
 export const deleteExpenseService = async (sn: string): Promise<void> => {
   try {
     const token = getToken();
-    await axios.delete(`${BASE_URL}/api/expenses/delete/${sn}`, {
+    await protectedApi.delete(`${BASE_URL}/api/expenses/delete/${sn}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
   } catch (error: any) {
@@ -83,7 +83,7 @@ export const deleteExpenseService = async (sn: string): Promise<void> => {
 export const updateExpenseService = async (sn: string, payload: AddExpensePayload): Promise<ExpenseResponse> => {
   try {
     const token = getToken();
-    const response = await axios.put<ExpenseResponse>(
+    const response = await protectedApi.put<ExpenseResponse>(
       `${BASE_URL}/api/expenses/update/${sn}`,
       payload,
       {
@@ -115,7 +115,7 @@ export const getExpenseByDateRangeService = async (from?: string, to?: string, c
       params.expense_category = category;
     }
 
-    const response = await axios.get(`${BASE_URL}/api/expenses`, {
+    const response = await protectedApi.get(`${BASE_URL}/api/expenses`, {
       headers: { Authorization: `Bearer ${token}` },
       params,
     });
@@ -146,7 +146,7 @@ export const getExpenseByDateRangeService = async (from?: string, to?: string, c
 export const getTotalExpenseService = async (): Promise<number> => {
   try {
     const token = getToken();
-    const response = await axios.get<TotalExpenseResponse>(`${BASE_URL}/api/expenses/total`, {
+    const response = await protectedApi.get<TotalExpenseResponse>(`${BASE_URL}/api/expenses/total`, {
       headers: { Authorization: `Bearer ${token}` },
       withCredentials: true,
     });

@@ -2,6 +2,8 @@
 
 import { createContext, useState, useContext, useEffect, ReactNode } from "react";
 
+import { clearBrowserSession } from "@/app/services/browserSession";
+
 interface User {
   id: number;
   customerid: string;
@@ -42,7 +44,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem("user");
+    clearBrowserSession();
   };
 
   return (

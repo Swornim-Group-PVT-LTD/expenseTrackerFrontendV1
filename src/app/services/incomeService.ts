@@ -1,5 +1,5 @@
 // services/incomeService.ts
-import axios from "axios";
+import protectedApi from "@/app/services/protectedApi";
 import BASE_URL from "@/app/urlConfig/urlConfig";
 import { AddIncomePayload, IncomeResponse,TotalIncomeResponse } from "../types/incomeType";
 
@@ -22,7 +22,7 @@ export const addIncomeService = async (
   try {
     const token = getToken();
 
-    const response = await axios.post<IncomeResponse>(
+    const response = await protectedApi.post<IncomeResponse>(
       `${BASE_URL}/api/incomes`,
       payload,
       {
@@ -49,7 +49,7 @@ export const getIncomeService = async (): Promise<IncomeResponse[]> => {
   try {
     const token = getToken();
 
-    const response = await axios.get(`${BASE_URL}/api/incomes`, {
+    const response = await protectedApi.get(`${BASE_URL}/api/incomes`, {
       headers: { Authorization: `Bearer ${token}` },
       withCredentials: true,
     });
@@ -86,7 +86,7 @@ export const getIncomeService = async (): Promise<IncomeResponse[]> => {
 export const deleteIncomeService = async (sn: string): Promise<void> => {
   try {
     const token = getToken();
-    await axios.delete(`${BASE_URL}/api/incomes/delete/${sn}`, {
+    await protectedApi.delete(`${BASE_URL}/api/incomes/delete/${sn}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
   } catch (error: any) {
@@ -99,7 +99,7 @@ export const deleteIncomeService = async (sn: string): Promise<void> => {
 export const updateIncomeService = async (sn: string, payload: AddIncomePayload): Promise<IncomeResponse> => {
   try {
     const token = getToken();
-    const response = await axios.put<IncomeResponse>(
+    const response = await protectedApi.put<IncomeResponse>(
       `${BASE_URL}/api/incomes/update/${sn}`,
       payload,
       {
@@ -131,7 +131,7 @@ export const getIncomeByDateRangeService = async (from?: string, to?: string, ca
       params.income_category = category;
     }
 
-    const response = await axios.get(`${BASE_URL}/api/incomes`, {
+    const response = await protectedApi.get(`${BASE_URL}/api/incomes`, {
       headers: { Authorization: `Bearer ${token}` },
       params,
     });
@@ -161,7 +161,7 @@ export const getIncomeByDateRangeService = async (from?: string, to?: string, ca
 export const getTotalIncomeService = async (): Promise<number> => {
   try {
     const token = getToken();
-    const response = await axios.get<TotalIncomeResponse>(`${BASE_URL}/api/income/total`, {
+    const response = await protectedApi.get<TotalIncomeResponse>(`${BASE_URL}/api/income/total`, {
       headers: { Authorization: `Bearer ${token}` },
       withCredentials: true,
     });

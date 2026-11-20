@@ -1,5 +1,5 @@
 // services/balanceService.ts
-import axios from "axios";
+import protectedApi from "@/app/services/protectedApi";
 import BASE_URL from "@/app/urlConfig/urlConfig";
 import {
   AddBalancePayload,
@@ -22,7 +22,7 @@ export const addBalanceService = async (
   try {
     const token = getToken();
 
-    const response = await axios.post<BalanceResponse>(
+    const response = await protectedApi.post<BalanceResponse>(
       `${BASE_URL}/api/balances`,
       payload,
       {
@@ -47,7 +47,7 @@ export const getBalancesService = async (): Promise<BalanceResponse> => {
   try {
     const token = getToken();
 
-    const response = await axios.get(`${BASE_URL}/api/balances`, {
+    const response = await protectedApi.get(`${BASE_URL}/api/balances`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -68,7 +68,7 @@ export const getMonthlyRemainingBalanceService =
     try {
       const token = getToken();
 
-      const response = await axios.get(
+      const response = await protectedApi.get(
         `${BASE_URL}/api/balances/monthly-remaining`,
         {
           headers: { Authorization: `Bearer ${token}` },
