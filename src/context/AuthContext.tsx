@@ -2,6 +2,7 @@
 
 import { createContext, useState, useContext, useEffect, ReactNode } from "react";
 
+import { clearBrowserSession } from "@/app/services/browserSession";
 export interface User {
   id: number;
   customerid: string;
