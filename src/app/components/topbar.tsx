@@ -36,11 +36,6 @@ export default function TopNav() {
   const { user, logout } = useAuth();
 
   const handleLogout = () => {
-    // Clear the access token cookie
-    document.cookie =
-      "access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; Secure; SameSite=Strict";
-
-    //remove from localstorage and context
     logout();
 
     // Redirect to login page

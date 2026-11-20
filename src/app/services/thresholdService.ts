@@ -1,5 +1,5 @@
 // services/thresholdService.ts
-import axios from "axios";
+import protectedApi from "@/app/services/protectedApi";
 import BASE_URL from "@/app/urlConfig/urlConfig";
 import { AddThresholdPayload, CompareExpenseAndThresholdResponse, ThresholdResponse } from "../types/thresholdType";
 
@@ -16,7 +16,7 @@ export const addThresholdService = async (
 ): Promise<ThresholdResponse> => {
     try {
         const token = getToken();
-        const response = await axios.post<ThresholdResponse>(
+        const response = await protectedApi.post<ThresholdResponse>(
             `${BASE_URL}/api/expense-thresholds`,
             payload,
             {
@@ -41,7 +41,7 @@ export const addThresholdService = async (
 export const getThresholdsService = async (): Promise<ThresholdResponse[]> => {
     try {
         const token = getToken();
-        const response = await axios.get(`${BASE_URL}/api/expense-thresholds`, {
+        const response = await protectedApi.get(`${BASE_URL}/api/expense-thresholds`, {
             headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -68,7 +68,7 @@ export const getThresholdsService = async (): Promise<ThresholdResponse[]> => {
 export const deleteThresholdService = async (sn: string): Promise<void> => {
     try {
         const token = getToken();
-        await axios.delete(`${BASE_URL}/api/expense-thresholds/${sn}`, {
+        await protectedApi.delete(`${BASE_URL}/api/expense-thresholds/${sn}`, {
             headers: { Authorization: `Bearer ${token}` },
         });
     } catch (error: any) {
@@ -82,7 +82,7 @@ export const deleteThresholdService = async (sn: string): Promise<void> => {
 export const updateThresholdService = async (sn: string, payload: AddThresholdPayload): Promise<ThresholdResponse> => {
     try {
         const token = getToken();
-        const response = await axios.put<ThresholdResponse>(
+        const response = await protectedApi.put<ThresholdResponse>(
             `${BASE_URL}/api/expense-thresholds/${sn}`,
             payload,
             {
@@ -109,7 +109,7 @@ export const updateThresholdService = async (sn: string, payload: AddThresholdPa
 export const compareThresholdWithExpensesService = async (filterType: string): Promise<CompareExpenseAndThresholdResponse> => {
     try {
         const token = getToken();
-        const response = await axios.get(`${BASE_URL}/api/expense-threshold/compare?filter=${filterType}`, {
+        const response = await protectedApi.get(`${BASE_URL}/api/expense-threshold/compare?filter=${filterType}`, {
             headers: { Authorization: `Bearer ${token}` },
         });
         return response.data;

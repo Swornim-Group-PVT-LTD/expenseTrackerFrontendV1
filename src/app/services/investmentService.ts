@@ -1,5 +1,5 @@
 // services/InvestmentService.ts
-import axios from "axios";
+import protectedApi from "@/app/services/protectedApi";
 import BASE_URL from "@/app/urlConfig/urlConfig";
 import { AddInvestmentPayload, InvestmentResponse,TotalInvestmentResponse } from "../types/investmentType";
 
@@ -16,7 +16,7 @@ export const addInvestmentService = async (
 ): Promise<InvestmentResponse> => {
   try {
     const token = getToken();
-    const response = await axios.post<InvestmentResponse>(
+    const response = await protectedApi.post<InvestmentResponse>(
       `${BASE_URL}/api/investments`,
       payload,
       {
@@ -38,7 +38,7 @@ export const getInvestmentService = async (): Promise<InvestmentResponse[]> => {
   try {
     const token = getToken();
 
-    const response = await axios.get(`${BASE_URL}/api/investments`, {
+    const response = await protectedApi.get(`${BASE_URL}/api/investments`, {
       headers: { "Authorization": `Bearer ${token}` },
     });
 
@@ -70,7 +70,7 @@ export const getInvestmentService = async (): Promise<InvestmentResponse[]> => {
 export const deleteInvestmentService = async (sn: string): Promise<void> => {
   try {
     const token = getToken();
-    await axios.delete(`${BASE_URL}/api/investments/delete/${sn}`, {
+    await protectedApi.delete(`${BASE_URL}/api/investments/delete/${sn}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
   } catch (error: any) {
@@ -87,7 +87,7 @@ export const updateInvestmentService = async (
 ): Promise<InvestmentResponse> => {
   try {
     const token = getToken();
-    const response = await axios.put<InvestmentResponse>(
+    const response = await protectedApi.put<InvestmentResponse>(
       `${BASE_URL}/api/investments/update/${sn}`,
       payload,
       {
@@ -121,7 +121,7 @@ export const getInvestmentByDateRangeService = async (from?: string, to?: string
       params.investment_category = category;
     }
 
-    const response = await axios.get(`${BASE_URL}/api/investments`, {
+    const response = await protectedApi.get(`${BASE_URL}/api/investments`, {
       headers: { Authorization: `Bearer ${token}` },
       params,
     });
@@ -150,7 +150,7 @@ export const getInvestmentByDateRangeService = async (from?: string, to?: string
 export const getTotalInvestmentService = async (): Promise<number> => {
   try {
     const token = getToken();
-    const response = await axios.get<TotalInvestmentResponse>(`${BASE_URL}/api/investment/total`, {
+    const response = await protectedApi.get<TotalInvestmentResponse>(`${BASE_URL}/api/investment/total`, {
       headers: { Authorization: `Bearer ${token}` },
       withCredentials: true,
     });

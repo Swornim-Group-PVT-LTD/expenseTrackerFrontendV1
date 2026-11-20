@@ -1,4 +1,4 @@
-import axios from "axios";
+import protectedApi from "@/app/services/protectedApi";
 import BASE_URL from "@/app/urlConfig/urlConfig";
 import { CurrencyPayload, CurrencyResponse } from "../../types/currencyType";
 
@@ -12,7 +12,7 @@ const getToken = (): string => {
 
 export const addCurrencyService = async (payload: CurrencyPayload): Promise<CurrencyResponse> => {
   try {
-    const response = await axios.post(`${BASE_URL}/api/currency/add`, payload, {
+    const response = await protectedApi.post(`${BASE_URL}/api/currency/add`, payload, {
       headers: {
         Authorization: `Bearer ${getToken()}`,
         "Content-Type": "application/json",
@@ -26,7 +26,7 @@ export const addCurrencyService = async (payload: CurrencyPayload): Promise<Curr
 
 export const getCurrencyService = async (): Promise<CurrencyResponse[]> => {
   try {
-    const response = await axios.get(`${BASE_URL}/api/currency/all`, {
+    const response = await protectedApi.get(`${BASE_URL}/api/currency/all`, {
       headers: {
         Authorization: `Bearer ${getToken()}`,
       },

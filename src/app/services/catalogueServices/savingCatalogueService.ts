@@ -1,5 +1,5 @@
 // services/savingCatalogueService.ts
-import axios from "axios";
+import protectedApi from "@/app/services/protectedApi";
 import BASE_URL from "@/app/urlConfig/urlConfig";
 import { AddSavingCategoryPayload, SavingCategoryResponse } from "../../types/catalolgueType/savingCatalogueType";
 
@@ -16,7 +16,7 @@ export const addSavingCategoryService = async (
 ): Promise<SavingCategoryResponse> => {
   try {
     const token = getToken();
-    const response = await axios.post<SavingCategoryResponse>(
+    const response = await protectedApi.post<SavingCategoryResponse>(
       `${BASE_URL}/api/savingCategory/add`,
       payload,
       {
@@ -39,7 +39,7 @@ export const addSavingCategoryService = async (
 export const getSavingCategoriesService = async (): Promise<SavingCategoryResponse[]> => {
   try {
     const token = getToken();
-    const response = await axios.get(`${BASE_URL}/api/savingCategory/list`, {
+    const response = await protectedApi.get(`${BASE_URL}/api/savingCategory/list`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -65,7 +65,7 @@ export const getSavingCategoriesService = async (): Promise<SavingCategoryRespon
 export const deleteSavingCategoryService = async (id: number): Promise<void> => {
   try {
     const token = getToken();
-    await axios.delete(`${BASE_URL}/api/savingCategory/${id}`, {
+    await protectedApi.delete(`${BASE_URL}/api/savingCategory/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     
@@ -83,7 +83,7 @@ export const updateSavingCategoryService = async (
 ): Promise<SavingCategoryResponse> => {
   try {
     const token = getToken();
-    const response = await axios.put<SavingCategoryResponse>(
+    const response = await protectedApi.put<SavingCategoryResponse>(
       `${BASE_URL}/api/savingCategory/${id}`,
       payload,
       {

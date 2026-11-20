@@ -1,5 +1,5 @@
 // services/investmentCatalogueService.ts
-import axios from "axios";
+import protectedApi from "@/app/services/protectedApi";
 import BASE_URL from "@/app/urlConfig/urlConfig";
 import { AddInvestmentCategoryPayload, InvestmentCategoryResponse } from "../../types/catalolgueType/investmentCatalogueType";
 
@@ -15,7 +15,7 @@ export const addInvestmentCategoryService = async (
   payload: AddInvestmentCategoryPayload
 ): Promise<InvestmentCategoryResponse> => {
   const token = getToken();
-  const response = await axios.post(`${BASE_URL}/api/investmentCategory/add`, payload, {
+  const response = await protectedApi.post(`${BASE_URL}/api/investmentCategory/add`, payload, {
     headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
     withCredentials: true,
   });
@@ -25,7 +25,7 @@ export const addInvestmentCategoryService = async (
 // Get all investment categories
 export const getInvestmentCategoriesService = async (): Promise<InvestmentCategoryResponse[]> => {
   const token = getToken();
-  const response = await axios.get(`${BASE_URL}/api/investmentCategory/list`, {
+  const response = await protectedApi.get(`${BASE_URL}/api/investmentCategory/list`, {
     headers: { "Authorization": `Bearer ${token}` },
   });
 
@@ -41,7 +41,7 @@ export const getInvestmentCategoriesService = async (): Promise<InvestmentCatego
 export const deleteInvestmentCategoryService = async (id: number): Promise<void> => {
   try {
     const token = getToken();
-    await axios.delete(`${BASE_URL}/api/investmentCategory/${id}`, {
+    await protectedApi.delete(`${BASE_URL}/api/investmentCategory/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     
@@ -58,7 +58,7 @@ export const updateInvestmentCategoryService = async (
 ): Promise<InvestmentCategoryResponse> => {
   try {
     const token = getToken();
-    const response = await axios.put<InvestmentCategoryResponse>(
+    const response = await protectedApi.put<InvestmentCategoryResponse>(
       `${BASE_URL}/api/investmentCategory/${id}`,
       payload,
       {

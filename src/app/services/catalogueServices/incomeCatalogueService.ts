@@ -1,5 +1,5 @@
 // services/incomeCatalogueService.ts
-import axios from "axios";
+import protectedApi from "@/app/services/protectedApi";
 import BASE_URL from "@/app/urlConfig/urlConfig";
 import { AddIncomeCategoryPayload, IncomeCategoryResponse } from "../../types/catalolgueType/incomeCatalogueType";
 
@@ -16,7 +16,7 @@ export const addIncomeCategoryService = async (
 ): Promise<IncomeCategoryResponse> => {
   try {
     const token = getToken();
-    const response = await axios.post<IncomeCategoryResponse>(
+    const response = await protectedApi.post<IncomeCategoryResponse>(
       `${BASE_URL}/api/incomeCategory/add`,
       payload,
       {
@@ -39,7 +39,7 @@ export const addIncomeCategoryService = async (
 export const getIncomeCategoriesService = async (): Promise<IncomeCategoryResponse[]> => {
   try {
     const token = getToken();
-    const response = await axios.get(`${BASE_URL}/api/incomeCategory/list`, {
+    const response = await protectedApi.get(`${BASE_URL}/api/incomeCategory/list`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -65,7 +65,7 @@ export const getIncomeCategoriesService = async (): Promise<IncomeCategoryRespon
 export const deleteIncomeCategoryService = async (id: number): Promise<void> => {
   try {
     const token = getToken();
-    await axios.delete(`${BASE_URL}/api/incomeCategory/${id}`, {
+    await protectedApi.delete(`${BASE_URL}/api/incomeCategory/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     
@@ -82,7 +82,7 @@ export const updateIncomeCategoryService = async (
 ): Promise<IncomeCategoryResponse> => {
   try {
     const token = getToken();
-    const response = await axios.put<IncomeCategoryResponse>(
+    const response = await protectedApi.put<IncomeCategoryResponse>(
       `${BASE_URL}/api/incomeCategory/${id}`,
       payload,
       {
