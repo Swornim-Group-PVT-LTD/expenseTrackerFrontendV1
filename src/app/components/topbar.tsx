@@ -7,7 +7,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-import { Settings, HelpCircle, LogOut } from "lucide-react";
+import { Settings, HelpCircle, LogOut, UserRound } from "lucide-react";
 
 import { Eye, EyeOff } from "lucide-react";
 import { useBalanceVisibility } from "../context/BalanceHideShowContext";
@@ -97,6 +97,17 @@ export default function TopNav() {
           {/* Dropdown */}
           {open && (
             <div className="absolute right-0 top-full mt-2 w-48 bg-[var(--color1)] rounded-lg shadow-lg py-2 z-50">
+              <Link
+                href="/dashboard/profile"
+                className="flex items-center w-full px-4 py-2 text-sm text-white hover:bg-[var(--color2)]"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setOpen(false);
+                }}
+              >
+                <UserRound className="h-4 w-4 mr-2" aria-hidden="true" />
+                Profile
+              </Link>
               <button
                 className="flex items-center w-full px-4 py-2 text-sm text-white hover:bg-[var(--color2)]"
                 onClick={() => router.push("/settings")}

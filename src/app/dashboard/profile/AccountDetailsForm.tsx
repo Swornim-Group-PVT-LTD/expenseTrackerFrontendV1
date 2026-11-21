@@ -97,6 +97,11 @@ export default function AccountDetailsForm() {
     }
   }
 
+  const logoPath = profile?.logo_uploads;
+  const logoUrl = logoPath && /^logo_uploads\/[\w.-]+$/.test(logoPath)
+    ? new URL(logoPath, BASE_URL + "/").href
+    : null;
+
   return (
     <section className="rounded-xl border border-gray-200 bg-white p-6 text-gray-900 shadow-sm">
       <h2 className="mb-4 text-lg font-semibold">Account details</h2>
@@ -119,10 +124,28 @@ export default function AccountDetailsForm() {
                 />
               </label>
             ))}
-            <label className="text-sm font-medium">
-              Replace logo
-              <input name="logo_uploads" type="file" accept="image/jpeg,image/png,image/gif,image/webp" className={inputClass} />
-            </label>
+            <div className="sm:col-span-2">
+              {logoUrl && (
+                <img
+                  src={logoUrl}
+                  alt="Current account logo"
+                  className="mb-3 h-24 w-24 rounded-lg border border-gray-200 object-contain"
+                />
+              )}
+              <label className="block text-sm font-medium">
+                {logoUrl ? "Replace logo" : "Upload logo"}
+                <input
+                  name="logo_uploads"
+                  type="file"
+                  accept="image/jpeg,image/png,image/gif,image/webp"
+                  aria-describedby="logo-help"
+                  className={inputClass}
+                />
+              </label>
+              <p id="logo-help" className="mt-1 text-sm text-gray-600">
+                JPEG, PNG, GIF, or WebP, up to 2 MB.
+              </p>
+            </div>
             <p className="text-sm text-gray-600 sm:col-span-2">
               Enter your current password to change your email or password.
             </p>

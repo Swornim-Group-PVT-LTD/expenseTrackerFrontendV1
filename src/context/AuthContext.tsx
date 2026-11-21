@@ -15,6 +15,7 @@ export interface User {
   country: string;
   address: string;
   user_type?: string | null;
+  logo_uploads?: string | null;
   representative_full_name?: string | null;
   created_at: string;
   updated_at: string;
