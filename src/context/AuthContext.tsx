@@ -14,6 +14,8 @@ export interface User {
   email_verified_at: string | null;
   country: string;
   address: string;
+  user_type?: string | null;
+  representative_full_name?: string | null;
   created_at: string;
   updated_at: string;
 }
